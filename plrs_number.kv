@@ -1,0 +1,70 @@
+<Button>
+    font_size: 32
+    size_hint: (0.15,0.045)
+
+<MainLayout>
+    FloatLayout:
+        size: root.width, root.height
+        orientation: "horizontal"
+        spacing: 10
+
+        canvas:
+            #Color:
+                #rgba: (0, 0, 0, 0)
+            Rectangle:
+                source:'images/background.png'
+                size: root.width, root.height
+                pos: self.pos
+
+
+    #FloatLayout:
+        #size: MainLayout.width, MainLayout.height
+
+        Label:
+            text: "Players"
+            pos_hint: {"center_y":.7, "center_x":0.38}
+            font_size: 56
+            outline_color: (0, 0, 0)
+            outline_width: 1
+
+        Label:
+            id: n_players
+            # Text
+            text: "2"
+            font_size: 56
+            bold: True
+            outline_color: (0.855, 0.361, 1)
+            outline_width: 2
+
+            pos_hint: {"center_y":.7, "center_x":0.73}
+
+        Button:
+            text: "+"
+            bold: True
+
+            pos_hint: {"center_y":.77, "center_x":0.73}
+            on_press: root.incr()
+
+        Button:
+            text: "-"
+            bold: True
+
+            pos_hint: {"center_y":.63, "center_x":0.73}
+            on_press: root.decr()
+
+        Button:
+            text: "That is... acceptable"
+            color: (0,0,0,1)
+            font_size: 20
+            italic: True
+
+            background_color: (1,1,1,1)
+            #background_color: (0,0,0,1)
+            background_normal: ""
+
+            pos_hint :{'center_x':0.5, 'center_y':0.35}
+            size_hint: .50, .058
+
+
+
+
