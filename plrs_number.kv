@@ -1,24 +1,34 @@
+#:import NoTransition kivy.uix.screenmanager.NoTransition
+
+WindowManager:
+    transition: NoTransition()
+    PlayersWindow:
+    FactionsWindow:
+    DrawResultsWindow:
+
+
 <Button>
     font_size: 32
     size_hint: (0.15,0.045)
 
-<MainLayout>
+#Background settings
+<Background@Label>
+    size: root.width, root.height
+    orientation: "horizontal"
+    spacing: 10
+
+    canvas:
+        Rectangle:
+            source:'images/background.png'
+            size: root.width, root.height
+            pos: self.pos
+
+<PlayersWindow>
+    name: "p_number"
+
     FloatLayout:
-        size: root.width, root.height
-        orientation: "horizontal"
-        spacing: 10
-
-        canvas:
-            #Color:
-                #rgba: (0, 0, 0, 0)
-            Rectangle:
-                source:'images/background.png'
-                size: root.width, root.height
-                pos: self.pos
-
-
-    #FloatLayout:
-        #size: MainLayout.width, MainLayout.height
+        #Call Background object
+        Background:
 
         Label:
             text: "Players"
@@ -59,12 +69,24 @@
             italic: True
 
             background_color: (1,1,1,1)
-            #background_color: (0,0,0,1)
             background_normal: ""
 
             pos_hint :{'center_x':0.5, 'center_y':0.35}
             size_hint: .50, .058
 
+            on_release:
+                app.root.current = "factions"
+                root.manager.transition.direction = "left"
+                # add transfer of the number of the players
 
 
 
+<FactionsWindow>
+    name: "factions"
+    #Temp
+    Background:
+    Label:
+        text: "There will be dragons"
+
+    # Add button to go back?
+    # Add info in the corner or on the top 2 players game
