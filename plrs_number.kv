@@ -1,18 +1,29 @@
 #:import NoTransition kivy.uix.screenmanager.NoTransition
 
-WindowManager:
+
+ScreenManager:
     transition: NoTransition()
     PlayersWindow:
     FactionsWindow:
     DrawResultsWindow:
 
-
+### Definitions ###
 <Button>
     font_size: 32
     size_hint: (0.15,0.045)
 
+<CheckBox>
+    size_hint_x: 0.3
+    size_hint_y: 0.1
+
+<Summary@Label>
+    color: (0.812, 0.796, 0.043)
+
+    outline_color: (0, 0, 0)
+    outline_width: 2
+
 #Background settings
-<Background@Label>
+<Background@Widget>
     size: root.width, root.height
     orientation: "horizontal"
     spacing: 10
@@ -22,6 +33,50 @@ WindowManager:
             source:'images/background.png'
             size: root.width, root.height
             pos: self.pos
+
+<Set@Label>
+    font_size: 28
+    outline_color: (0, 0, 0)
+    outline_width: 2
+    color: (1,1,1,1)
+    size_hint_y: 0.2
+
+<Faction@Label>
+    font_size: 20
+    outline_color: (0, 0, 0)
+    outline_width: 1
+    color: (1,1,1,1)
+    size_hint_y: 0.2
+    #text_size:self.size
+    #halign:'right'
+    #valign:'middle'
+
+<Next@Button>
+    color: (0,0,0,1)
+    font_size: 20
+    italic: True
+
+    background_color: (1,1,1,1)
+    background_normal: ""
+
+    pos_hint :{'center_x':0.5, 'center_y':0.25}
+    size_hint: .50, .058
+
+
+<Back@Button>
+    color: (0,0,0,1)
+    font_size: 16
+    italic: True
+
+    background_color: (1,1,1,1)
+    background_normal: ""
+
+    pos_hint :{'center_x':0.5, 'center_y':0.1}
+    size_hint: .25, .041
+
+
+
+### Screens ###
 
 <PlayersWindow>
     name: "p_number"
@@ -39,54 +94,146 @@ WindowManager:
 
         Label:
             id: n_players
-            # Text
-            text: "2"
+            text: root.nbr_plyrs
             font_size: 56
             bold: True
             outline_color: (0.855, 0.361, 1)
             outline_width: 2
-
             pos_hint: {"center_y":.7, "center_x":0.73}
 
         Button:
             text: "+"
             bold: True
-
             pos_hint: {"center_y":.77, "center_x":0.73}
             on_press: root.incr()
 
         Button:
             text: "-"
             bold: True
-
             pos_hint: {"center_y":.63, "center_x":0.73}
             on_press: root.decr()
 
-        Button:
+        Next:
             text: "That is... acceptable"
-            color: (0,0,0,1)
-            font_size: 20
-            italic: True
-
-            background_color: (1,1,1,1)
-            background_normal: ""
-
-            pos_hint :{'center_x':0.5, 'center_y':0.35}
-            size_hint: .50, .058
-
             on_release:
                 app.root.current = "factions"
-                root.manager.transition.direction = "left"
-                # add transfer of the number of the players
-
+                root.players()
 
 
 <FactionsWindow>
     name: "factions"
-    #Temp
-    Background:
-    Label:
-        text: "There will be dragons"
 
-    # Add button to go back?
-    # Add info in the corner or on the top 2 players game
+    FloatLayout:
+        #Call Background object
+        Background:
+
+        Summary:
+            # Value shared in app class
+            text: f"{app.shared_players} players game"
+            font_size: 20
+
+            pos_hint: {"center_y":.94, "center_x":0.5}
+
+        GridLayout:
+            rows: 7
+            cols: 2
+
+            size_hint_x: 0.8
+            size_hint_y: 0.50
+            pos_hint: {"center_y":.62, "center_x":0.52}
+
+            Set:
+                text: f"{app.fc[0].box}"
+
+            CheckBox:
+                id: set1
+                on_release:
+                    root.set_flipper(self, self.active)
+                    root.updt_stat()
+
+            Faction:
+                text: f"{app.fc[0].name}"
+
+            CheckBox:
+                id: set1_f1
+                on_release:
+                    root.set_splitter()
+                    root.updt_stat()
+
+            Faction:
+                text: f"{app.fc[1].name}"
+
+            CheckBox:
+                id: set1_f2
+                on_release:
+                    root.set_splitter()
+                    root.updt_stat()
+
+            Set:
+                text: f"{app.fc[2].box}"
+
+            CheckBox:
+                id: set2
+                on_release:
+                    root.set_flipper(self, self.active)
+                    root.updt_stat()
+
+            Faction:
+                text: f"{app.fc[2].name}"
+
+            CheckBox:
+                id: set2_f1
+                on_release:
+                    root.set_splitter()
+                    root.updt_stat()
+
+            Faction:
+                text: f"{app.fc[3].name}"
+
+            CheckBox:
+                id: set2_f2
+                on_release:
+                    root.set_splitter()
+                    root.updt_stat()
+
+            Set:
+                text: f"{app.fc[4].name}"
+
+
+            CheckBox:
+                id: exp1
+                on_active: root.updt_stat()
+
+        Back:
+            text: "Go back"
+            on_release:
+                app.root.current = "p_number"
+
+        Next:
+            id: hidden_next
+            text: "All wigs report in"
+            opacity: 0
+            on_release:
+                app.root.current = "result"
+
+
+<DrawResultsWindow>
+    name: "result"
+    FloatLayout:
+        Background:
+        Summary:
+            # Value shared in app class
+            text: f"{app.shared_players} players game"
+            font_size: 20
+
+            pos_hint: {"center_y":.94, "center_x":0.5}
+        #tmp
+        Label:
+            text: "There will be dragons"
+
+        Back:
+            text: "Go back"
+
+            on_release:
+                app.root.current = "factions"
+                root.manager.transition.direction = "left"
