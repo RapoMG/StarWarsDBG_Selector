@@ -202,7 +202,7 @@ ScreenManager:
 
             CheckBox:
                 id: exp1
-                on_active: root.updt_stat()
+                on_release: root.updt_stat()
 
         Back:
             text: "Go back"
@@ -215,6 +215,7 @@ ScreenManager:
             opacity: 0
             on_release:
                 app.root.current = "result"
+                root.draw()
 
 
 <DrawResultsWindow>

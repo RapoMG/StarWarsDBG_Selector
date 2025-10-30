@@ -56,13 +56,17 @@ class FactionsWindow(Screen):
         self.chk[0] = self.ids.set1
         self.chk[3] =  self.ids.set2
 
-        # show hidden button
+        self.hidden()
+
+
+    def hidden(self):
+        # show hidden button if selected factions equals number of players
         decks = 0
         plrs = App.get_running_app().shared_players
         self.ids.hidden_next.opacity = 0
         for i in range(len(self.chk)):
-            if self.chk[i] == True: # cant be short; object pass as True
-                decks +=1
+            if self.chk[i] == True:  # cant be short; without Boolean object pass as True
+                decks += 1
                 if decks >= int(plrs):
                     self.ids.hidden_next.opacity = 1
 
@@ -98,6 +102,22 @@ class FactionsWindow(Screen):
             self.ids.set2.active = True
         else:
             self.ids.set2.active = False
+
+    def draw(self):
+        # Number of players and factions compared in hidden() method
+        # Prepare selected factions
+        selected =[]
+        for i in range(len(self.chk)):
+            if self.chk[1]: selected.append(self.app.fc[0])
+            if self.chk[2]: selected.append(self.app.fc[1])
+            if self.chk[4]: selected.append(self.app.fc[2])
+            if self.chk[5]: selected.append(self.app.fc[3])
+            if self.chk[6]: selected.append(self.app.fc[4])
+
+        # Setting table
+        tbl.set_game(selected)
+        # Clean selection list?
+        selected.clear()
 
 
 #thrid screen (page)
