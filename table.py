@@ -25,6 +25,9 @@ class Table:
         if self.players == 4:
             self.players4()
 
+        # Clean fon new selection
+        self.factions_pool.clear()
+
     def draw(self):
         # Probably unnecessary complicated
         # draw factions
@@ -35,15 +38,15 @@ class Table:
 
             # random faction for the selected players
             # Check if player already have faction
-            if names[rnd].faction == "":
+            if names[rnd].faction is None:
                 rndf = random.randrange(0, len(self.factions_pool) - 1)
                 names[rnd].add_faction(self.factions_pool.pop(rndf))  # ERR for players equal to no. of factions
                 f += 1
             # last player if
             if self.players - f == 1 and len(self.factions_pool) == 1:
                 for p in range(self.players):  # find last player
-                    if names[p].faction == "":  # last player dont have the faction
-                        names[p].set_faction(self.factions_pool[0])  # last faction for last player
+                    if names[p].faction is None:  # last player dont have the faction
+                        names[p].add_faction(self.factions_pool[0])  # last faction for last player
                         f += 1
 
 

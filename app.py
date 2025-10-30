@@ -107,22 +107,71 @@ class FactionsWindow(Screen):
         # Number of players and factions compared in hidden() method
         # Prepare selected factions
         selected =[]
-        for i in range(len(self.chk)):
-            if self.chk[1]: selected.append(self.app.fc[0])
-            if self.chk[2]: selected.append(self.app.fc[1])
-            if self.chk[4]: selected.append(self.app.fc[2])
-            if self.chk[5]: selected.append(self.app.fc[3])
-            if self.chk[6]: selected.append(self.app.fc[4])
+        src = App.get_running_app()
+        if self.chk[1]: selected.append(src.fc[0])
+        if self.chk[2]: selected.append(src.fc[1])
+        if self.chk[4]: selected.append(src.fc[2])
+        if self.chk[5]: selected.append(src.fc[3])
+        if self.chk[6]: selected.append(src.fc[4])
 
         # Setting table
         tbl.set_game(selected)
-        # Clean selection list?
+        # Clean selection list
         selected.clear()
 
 
 #thrid screen (page)
 class DrawResultsWindow(Screen):
-    pass
+
+    def result(self):
+        # Access shared variables
+        a = App.get_running_app()
+        # Number of players
+        n = int(App.get_running_app().shared_players)
+
+        # Starting player txt
+        st1=""
+        st2=""
+        st3=""
+        st4=""
+
+        ##### DRAFT #####
+
+        # 1st player
+        if a.pl[0].first: st1 = " (starts)"
+        self.ids.line2.text = f"{a.pl[0].faction.name} commanded\n by {a.pl[0].name}{st1} "
+
+        #2nd player
+        if a.pl[1].first: st2 = " (starts)"
+        self.ids.line4.text = f"{a.pl[1].faction.name} leaded\n by {a.pl[1].name}{st2} "
+
+        # 3rd player
+        if n>=3:
+            if a.pl[2].first: st3 = " (starts)"
+            self.ids.line6.text = f"{a.pl[2].faction.name} commanded\n by {a.pl[2].name}{st3} "
+            self.ids.line5.text = "and versus"
+
+        # 4th player
+        if n==4:
+            if a.pl[3].first: st4 = " (starts)"
+            self.ids.line7.text = f"and {a.pl[3].faction.name} leaded\n by {a.pl[3].name}{st4} "
+
+            # Versus /and lines
+            self.ids.line3.text = "in alliance with"
+            self.ids.line5.text = "combined forces of"
+
+
+    #@staticmethod
+    def clean(self):
+        # Reset draws
+        for i in range(4):
+            App.get_running_app().pl[i].add_faction(None)
+            App.get_running_app().pl[i].first = False
+
+        # Reset text
+        self.ids.line5.text = ""
+        self.ids.line6.text = ""
+        self.ids.line7.text = ""
 
 class WindowManager(ScreenManager):
     pass
