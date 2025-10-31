@@ -133,35 +133,44 @@ class DrawResultsWindow(Screen):
         st1=""
         st2=""
         st3=""
-        st4=""
 
-        ##### DRAFT #####
-
-        # 1st player
-        if a.pl[0].first: st1 = " (starts)"
-        self.ids.line2.text = f"{a.pl[0].faction.name} commanded\n by {a.pl[0].name}{st1} "
-
-        #2nd player
-        if a.pl[1].first: st2 = " (starts)"
-        self.ids.line4.text = f"{a.pl[1].faction.name} leaded\n by {a.pl[1].name}{st2} "
-
-        # 3rd player
-        if n>=3:
-            if a.pl[2].first: st3 = " (starts)"
-            self.ids.line6.text = f"{a.pl[2].faction.name} commanded\n by {a.pl[2].name}{st3} "
-            self.ids.line5.text = "and versus"
-
-        # 4th player
+        # 4 players (team play)
         if n==4:
-            if a.pl[3].first: st4 = " (starts)"
-            self.ids.line7.text = f"and {a.pl[3].faction.name} leaded\n by {a.pl[3].name}{st4} "
+            # Factions lines
+            st = True
+            frc = True
+            for i in range (4):
+                if a.pl[i].first and st:
+                    self.ids.f_line1.text = f"{a.pl[i].faction.name}\n commanded by {a.pl[i].name}"
+                    st = False
+                elif a.pl[i].first and not st:
+                    self.ids.f_line2.text = f"{a.pl[i].faction.name}\n led by {a.pl[i].name}"
+                elif not a.pl[i].first and frc:
+                    self.ids.f_line3.text = f"{a.pl[i].faction.name}\n commanded by {a.pl[i].name}"
+                    frc = False
+                else:
+                    self.ids.f_line4.text = f"and {a.pl[i].faction.name}\n led by {a.pl[i].name}"
+            # Connecting lines
+            self.ids.con_line1.text = "in alliance with"
+            self.ids.con_line2.text = "starting their war effort against"
 
-            # Versus /and lines
-            self.ids.line3.text = "in alliance with"
-            self.ids.line5.text = "combined forces of"
+        # 2 and 3 players game
+        else:
+            # 1st player
+            if a.pl[0].first: st1 = " (starts)"
+            self.ids.f_line1.text = f"{a.pl[0].faction.name}\n commanded by {a.pl[0].name}{st1} "
+
+            #2nd player
+            if a.pl[1].first: st2 = " (starts)"
+            self.ids.f_line2.text = f"{a.pl[1].faction.name}\n leaded by {a.pl[1].name}{st2} "
+
+            # 3rd player
+            if n == 3:
+                if a.pl[2].first: st3 = " (starts)"
+                self.ids.f_line3.text = f"{a.pl[2].faction.name}\n commanded by {a.pl[2].name}{st3} "
+                self.ids.con_line2.text = "and against"
 
 
-    #@staticmethod
     def clean(self):
         # Reset draws
         for i in range(4):
@@ -169,9 +178,10 @@ class DrawResultsWindow(Screen):
             App.get_running_app().pl[i].first = False
 
         # Reset text
-        self.ids.line5.text = ""
-        self.ids.line6.text = ""
-        self.ids.line7.text = ""
+        self.ids.con_line1.text = "versus"
+        self.ids.con_line2.text = ""
+        self.ids.f_line3.text = ""
+        self.ids.f_line4.text = ""
 
 class WindowManager(ScreenManager):
     pass
