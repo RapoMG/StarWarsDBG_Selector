@@ -1,0 +1,78 @@
+#:import NoTransition kivy.uix.screenmanager.NoTransition
+#:include players_window.kv
+#:include faction_window.kv
+#:include draw_result_window.kv
+
+
+ScreenManager:
+    transition: NoTransition()
+    PlayersWindow:
+    FactionsWindow:
+    DrawResultsWindow:
+
+### Definitions ###
+<Button>
+    font_size: 32
+    size_hint: (0.15,0.045)
+
+<CheckBox>
+    size_hint_x: 0.3
+    size_hint_y: 0.1
+
+<Summary@Label>
+    color: (0.812, 0.796, 0.043)
+
+    outline_color: (0, 0, 0)
+    outline_width: 2
+
+    halign:"center"
+    valign:"middle"
+
+#Background settings
+<Background@Widget>
+    size: root.width, root.height
+    orientation: "horizontal"
+    spacing: 10
+
+    canvas:
+        Rectangle:
+            source:'images/background.png'
+            size: root.width, root.height
+            pos: self.pos
+
+<Set@Label>
+    font_size: 28
+    outline_color: (0, 0, 0)
+    outline_width: 2
+    color: (1,1,1,1)
+    size_hint_y: 0.2
+
+<Faction@Label>
+    font_size: 20
+    outline_color: (0, 0, 0)
+    outline_width: 1
+    color: (1,1,1,1)
+    size_hint_y: 0.2
+
+<Next@Button>
+    color: (0,0,0,1)
+    font_size: 20
+    italic: True
+
+    background_color: (1,1,1,1)
+    background_normal: ""
+
+    pos_hint :{'center_x':0.5, 'center_y':0.25}
+    size_hint: .50, .058
+
+
+<Back@Button>
+    color: (0,0,0,1)
+    font_size: 16
+    italic: True
+
+    background_color: (1,1,1,1)
+    background_normal: ""
+
+    pos_hint :{'center_x':0.5, 'center_y':0.1}
+    size_hint: .25, .041

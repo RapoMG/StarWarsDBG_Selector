@@ -3,15 +3,14 @@ from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.properties import StringProperty
 from kivy.uix.screenmanager import Screen, ScreenManager
-from kivy.uix.checkbox import CheckBox
 
 from table import Table
 from elements import factions, players
 
-ch = CheckBox()
 
 # Window size
-Window.size = (450,800) # (1080,1920)
+#Window.size = (1080,1920) # (1080,1920) (450,800)
+Window.size = (450,800) #temp
 
 ### Multiple Screens
 #First screen (page)
@@ -65,7 +64,7 @@ class FactionsWindow(Screen):
         plrs = App.get_running_app().shared_players
         self.ids.hidden_next.opacity = 0
         for i in range(len(self.chk)):
-            if self.chk[i] == True:  # cant be short; without Boolean object pass as True
+            if self.chk[i] == True:  # can't be short; without Boolean any object pass as True
                 decks += 1
                 if decks >= int(plrs):
                     self.ids.hidden_next.opacity = 1
@@ -119,6 +118,18 @@ class FactionsWindow(Screen):
         # Clean selection list
         selected.clear()
 
+        # neutral deck visibility
+        src.neut = self.ids.neut_check.active
+
+    def is_neutral(self):
+        # Option hidden for 3 players game
+        if int(App.get_running_app().shared_players) == 3:
+            self.ids.neut_lab.opacity = 0
+            self.ids.neut_check.opacity = 0
+        else:
+            self.ids.neut_lab.opacity = 1
+            self.ids.neut_check.opacity = 1
+
 
 #thrid screen (page)
 class DrawResultsWindow(Screen):
@@ -154,6 +165,9 @@ class DrawResultsWindow(Screen):
             self.ids.con_line1.text = "in alliance with"
             self.ids.con_line2.text = "starting their war effort against"
 
+            # Neutral decks
+            if a.neut: self.ids.n_line.text = f"Neutral deck for\n Region 1: {tbl.neut[0]}, Region 2: {tbl.neut[1]}"
+
         # 2 and 3 players game
         else:
             # 1st player
@@ -170,6 +184,9 @@ class DrawResultsWindow(Screen):
                 self.ids.f_line3.text = f"{a.pl[2].faction.name}\n commanded by {a.pl[2].name}{st3} "
                 self.ids.con_line2.text = "and against"
 
+            # Neutral deck
+            if a.neut: self.ids.n_line.text = f"Neutral deck: {tbl.neut[0]}"
+
 
     def clean(self):
         # Reset draws
@@ -182,6 +199,7 @@ class DrawResultsWindow(Screen):
         self.ids.con_line2.text = ""
         self.ids.f_line3.text = ""
         self.ids.f_line4.text = ""
+        self.ids.n_line.text = ""
 
 class WindowManager(ScreenManager):
     pass
@@ -194,10 +212,13 @@ class SelectorApp(App):
     fc = factions
     pl = players
 
+    # Should neutral deck be drawn
+    neut = True
+
 
     def build(self):
 
-        return Builder.load_file("plrs_number.kv")
+        return Builder.load_file("main.kv")
 
 if __name__ == "__main__":
     # Create game table

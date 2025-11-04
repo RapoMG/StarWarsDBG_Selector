@@ -28,6 +28,12 @@ factions = [
     Faction("Mandalorian","Mandalorian"),
 ]
 
+# Neutral decks
+neutral = [
+    factions[0].box,
+    factions[2].box,
+]
+
 # Default players
 players = [
     Player("Player 1"),

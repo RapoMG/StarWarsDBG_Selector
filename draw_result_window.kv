@@ -1,0 +1,70 @@
+
+<DrawResultsWindow>
+    name: "result"
+    on_pre_enter: root.result()
+    FloatLayout:
+        Background:
+        Summary:
+            # Value shared in app class
+            text: f"{app.shared_players} players game"
+            font_size: 20
+
+            pos_hint: {"center_y":.94, "center_x":0.5}
+
+        Summary:
+            id: f_line1
+            text: f"Who is here?"
+            font_size: 26
+
+            pos_hint: {"center_y":.86, "center_x":0.5}
+
+        Summary:
+            id: con_line1
+            text: f"versus"
+            font_size: 20
+
+            pos_hint: {"center_y":.78, "center_x":0.5}
+
+        Summary:
+            id: f_line2
+            text: f"To be announced..."
+            font_size: 26
+
+            pos_hint: {"center_y":.70, "center_x":0.5}
+
+        Summary:
+            id: con_line2
+            text: f""
+            font_size: 20
+
+            pos_hint: {"center_y":.62, "center_x":0.5}
+
+        Summary:
+            id: f_line3
+            text: f""
+            font_size: 26
+
+            pos_hint: {"center_y":.54, "center_x":0.5}
+
+        Summary:
+            id: f_line4
+            text: f""
+            font_size: 26
+
+            pos_hint: {"center_y":.42, "center_x":0.5}
+
+        Summary:
+            id: n_line
+            text: f""
+            font_size: 20
+            color: (0.64, 0.64, 0.64)
+
+            pos_hint: {"center_y":.30, "center_x":0.5}
+
+        Back:
+            text: "Go back"
+
+            on_release:
+                app.root.current = "factions"
+                root.manager.transition.direction = "left"
+                root.clean()

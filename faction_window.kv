@@ -1,0 +1,120 @@
+<FactionsWindow>
+    name: "factions"
+    on_enter:
+        root.is_neutral()
+        root.updt_stat() # Necessary in case changing number of players
+
+    FloatLayout:
+        #Call Background object
+        Background:
+
+        Summary:
+            # Value shared in app class
+            text: f"{app.shared_players} players game"
+            font_size: 20
+
+            pos_hint: {"center_y":.94, "center_x":0.5}
+
+        GridLayout:
+            rows: 8
+            cols: 2
+
+            size_hint_x: 0.8
+            size_hint_y: 0.50
+            pos_hint: {"center_y":.62, "center_x":0.52}
+
+            Set:
+                text: f"{app.fc[0].box}"
+
+            CheckBox:
+                id: set1
+                on_release:
+                    root.updt_stat() # Necessary to work with first use
+                    root.set_flipper(self, self.active)
+                    root.updt_stat()
+
+            Faction:
+                text: f"{app.fc[0].name}"
+
+            CheckBox:
+                id: set1_f1
+                on_release:
+                    root.set_splitter()
+                    root.updt_stat()
+
+            Faction:
+                text: f"{app.fc[1].name}"
+
+            CheckBox:
+                id: set1_f2
+                on_release:
+                    root.set_splitter()
+                    root.updt_stat()
+
+            Set:
+                text: f"{app.fc[2].box}"
+
+            CheckBox:
+                id: set2
+                on_release:
+                    root.updt_stat() # Necessary to work with first use
+                    root.set_flipper(self, self.active)
+                    root.updt_stat()
+
+            Faction:
+                text: f"{app.fc[2].name}"
+
+            CheckBox:
+                id: set2_f1
+                on_release:
+                    root.set_splitter()
+                    root.updt_stat()
+
+            Faction:
+                text: f"{app.fc[3].name}"
+
+            CheckBox:
+                id: set2_f2
+                on_release:
+                    root.set_splitter()
+                    root.updt_stat()
+
+            Set:
+                text: f"{app.fc[4].name}"
+
+
+            CheckBox:
+                id: exp1
+                on_release: root.updt_stat()
+
+            # Neutral deck draw
+            Label:
+                id: neut_lab
+                text: f"Random neutral deck"
+                italic: True
+                color: (0.64, 0.64, 0.64)
+                font_size: 20
+
+                opacity: 1
+                size_hint_y: 0.4
+                pos: self.pos
+
+            CheckBox:
+                id: neut_check
+                active: True
+                opacity: 1
+                on_release: root.updt_stat()
+
+        Back:
+            text: "Go back"
+            on_release:
+                app.root.current = "p_number"
+
+        Next:
+            id: hidden_next
+            text: "All wigs report in"
+            opacity: 0
+            on_release:
+                root.draw()
+                app.root.current = "result"
+
