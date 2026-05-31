@@ -12,7 +12,6 @@ class Table:
 
     def set_game(self, fcts):
         # Get copy of factions to draw from
-        #self.factions_pool.clear() # Clean old selection while draw()
         self.factions_pool = fcts
 
         #Draw factions
@@ -24,9 +23,9 @@ class Table:
         # Chose draw rules
         if self.players == 2:
             self.players2()
-        if self.players == 3:
+        elif self.players == 3:
             self.players3()
-        if self.players == 4:
+        elif self.players == 4:
             self.players4()
 
         # Clean fon new selection

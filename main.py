@@ -1,16 +1,31 @@
+from pathlib import Path
+
 from kivy.app import App
-from kivy.core.window import Window
+from kivy.config import Config
 from kivy.lang import Builder
+from kivy.resources import resource_add_path
 from kivy.properties import StringProperty
 from kivy.uix.screenmanager import Screen, ScreenManager
+from kivy.utils import platform
 
 from table import Table
 from elements import factions, players
 
 
-# Window size
-#Window.size = (1080,1920) # (1080,1920) (450,800)
-Window.size = (450,800) #temp
+BASE_DIR = Path(__file__).resolve().parent
+
+# Keep the desktop test window small, but do not force a fixed window on Android.
+if platform != "android":
+    Config.set("graphics", "resizable", True)
+
+from kivy.core.window import Window
+
+if platform != "android":
+    Window.size = (450, 800)
+
+# Make bundled assets discoverable when the app is packaged.
+resource_add_path(str(BASE_DIR))
+resource_add_path(str(BASE_DIR / "images"))
 
 ### Multiple Screens
 #First screen (page)
@@ -217,8 +232,7 @@ class SelectorApp(App):
 
 
     def build(self):
-
-        return Builder.load_file("main.kv")
+        return Builder.load_file(str(BASE_DIR / "main.kv"))
 
 if __name__ == "__main__":
     # Create game table
