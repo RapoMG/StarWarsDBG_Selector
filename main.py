@@ -2,15 +2,13 @@ from pathlib import Path
 
 from kivy.app import App
 from kivy.config import Config
+from kivy.clock import Clock
+
 from kivy.lang import Builder
 from kivy.resources import resource_add_path
 from kivy.properties import StringProperty
 from kivy.uix.screenmanager import Screen, ScreenManager
 from kivy.utils import platform
-
-from table import Table
-from elements import factions, players
-
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -21,7 +19,7 @@ if platform != "android":
 from kivy.core.window import Window
 
 if platform != "android":
-    Window.size = (450, 800)
+    Window.size = (450, 800)  # 1920, 1080
 
 # Make bundled assets discoverable when the app is packaged.
 resource_add_path(str(BASE_DIR))
@@ -46,8 +44,9 @@ class PlayersWindow(Screen):
 
     def players(self):
         # Save value in the 'shared app' property
-        App.get_running_app().shared_players = self.nbr_plyrs
-        tbl.nbr_of_players(int(self.nbr_plyrs))
+        app = App.get_running_app()
+        app.shared_players = self.nbr_plyrs
+        app.table.nbr_of_players(int(self.nbr_plyrs))
 
 
 #second screen (page)
@@ -120,6 +119,7 @@ class FactionsWindow(Screen):
     def draw(self):
         # Number of players and factions compared in hidden() method
         # Prepare selected factions
+        app = App.get_running_app()
         selected =[]
         src = App.get_running_app()
         if self.chk[1]: selected.append(src.fc[0])
@@ -129,12 +129,12 @@ class FactionsWindow(Screen):
         if self.chk[6]: selected.append(src.fc[4])
 
         # Setting table
-        tbl.set_game(selected)
+        app.table.set_game(selected)
         # Clean selection list
         selected.clear()
 
         # neutral deck visibility
-        src.neut = self.ids.neut_check.active
+        app.neut = self.ids.neut_check.active
 
     def is_neutral(self):
         # Option hidden for 3 players game
@@ -151,9 +151,9 @@ class DrawResultsWindow(Screen):
 
     def result(self):
         # Access shared variables
-        a = App.get_running_app()
+        app = App.get_running_app()
         # Number of players
-        n = int(App.get_running_app().shared_players)
+        n = int(app.shared_players)
 
         # Starting player txt
         st1=""
@@ -166,41 +166,43 @@ class DrawResultsWindow(Screen):
             st = True
             frc = True
             for i in range (4):
-                if a.pl[i].first and st:
-                    self.ids.f_line1.text = f"{a.pl[i].faction.name}\n commanded by {a.pl[i].name}"
+                if app.pl[i].first and st:
+                    self.ids.f_line1.text = f"{app.pl[i].faction.name}\n commanded by {app.pl[i].name}"
                     st = False
-                elif a.pl[i].first and not st:
-                    self.ids.f_line2.text = f"{a.pl[i].faction.name}\n led by {a.pl[i].name}"
-                elif not a.pl[i].first and frc:
-                    self.ids.f_line3.text = f"{a.pl[i].faction.name}\n commanded by {a.pl[i].name}"
+                elif app.pl[i].first and not st:
+                    self.ids.f_line2.text = f"{app.pl[i].faction.name}\n led by {app.pl[i].name}"
+                elif not app.pl[i].first and frc:
+                    self.ids.f_line3.text = f"{app.pl[i].faction.name}\n commanded by {app.pl[i].name}"
                     frc = False
                 else:
-                    self.ids.f_line4.text = f"and {a.pl[i].faction.name}\n led by {a.pl[i].name}"
+                    self.ids.f_line4.text = f"and {app.pl[i].faction.name}\n led by {app.pl[i].name}"
             # Connecting lines
             self.ids.con_line1.text = "in alliance with"
             self.ids.con_line2.text = "starting their war effort against"
 
             # Neutral decks
-            if a.neut: self.ids.n_line.text = f"Neutral deck for\n Region 1: {tbl.neut[0]}, Region 2: {tbl.neut[1]}"
+            if app.neut:
+                self.ids.n_line.text = (f"Neutral deck for\n"
+                                        f" Region 1: {app.table.neut[0]}, Region 2: {app.table.neut[1]}")
 
         # 2 and 3 players game
         else:
             # 1st player
-            if a.pl[0].first: st1 = " (starts)"
-            self.ids.f_line1.text = f"{a.pl[0].faction.name}\n commanded by {a.pl[0].name}{st1} "
+            if app.pl[0].first: st1 = " (starts)"
+            self.ids.f_line1.text = f"{app.pl[0].faction.name}\n commanded by {app.pl[0].name}{st1} "
 
             #2nd player
-            if a.pl[1].first: st2 = " (starts)"
-            self.ids.f_line2.text = f"{a.pl[1].faction.name}\n leaded by {a.pl[1].name}{st2} "
+            if app.pl[1].first: st2 = " (starts)"
+            self.ids.f_line2.text = f"{app.pl[1].faction.name}\n leaded by {app.pl[1].name}{st2} "
 
             # 3rd player
             if n == 3:
-                if a.pl[2].first: st3 = " (starts)"
-                self.ids.f_line3.text = f"{a.pl[2].faction.name}\n commanded by {a.pl[2].name}{st3} "
+                if app.pl[2].first: st3 = " (starts)"
+                self.ids.f_line3.text = f"{app.pl[2].faction.name}\n commanded by {app.pl[2].name}{st3} "
                 self.ids.con_line2.text = "and against"
 
             # Neutral deck
-            if a.neut: self.ids.n_line.text = f"Neutral deck: {tbl.neut[0]}"
+            if app.neut: self.ids.n_line.text = f"Neutral deck: {app.table.neut[0]}"
 
 
     def clean(self):
@@ -222,20 +224,40 @@ class WindowManager(ScreenManager):
 
 
 class SelectorApp(App):
+    """ Main app """
     # Shared data accessible by all screens
     shared_players = StringProperty("Waiting for players...")
-    fc = factions
-    pl = players
+    #fc = factions
+    #pl = players
+    table = None
+    fc = None
+    pl = None
 
     # Should neutral deck be drawn
     neut = True
 
 
     def build(self):
+        """ Build app """
+        resource_add_path(str(BASE_DIR))
+        resource_add_path(str(BASE_DIR / "images"))
         return Builder.load_file(str(BASE_DIR / "main.kv"))
 
+    def on_start(self):
+        """ Initialize app """
+        Clock.schedule_once(self._deferred_init, 0)
+
+    def _deferred_init(self, _td):
+        """ Initialize app elements """
+        from elements import factions, players
+        from  table import Table
+
+        # Create game table
+        self.table = Table()
+        self.pl = players
+        self.fc = factions
+
+
 if __name__ == "__main__":
-    # Create game table
-    tbl = Table()
     # Run app
     SelectorApp().run()
