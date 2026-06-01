@@ -6,6 +6,7 @@
 
 ScreenManager:
     transition: NoTransition()
+    LoadingWindow:
     PlayersWindow:
     FactionsWindow:
     DrawResultsWindow:
@@ -76,3 +77,21 @@ ScreenManager:
 
     pos_hint :{'center_x':0.5, 'center_y':0.1}
     size_hint: .25, .041
+
+<LoadingWindow>:
+    name: "loading"
+
+    FloatLayout:
+        canvas.before:
+            Color:
+                rgba: (0.12, 0.12, 0.12, 1)
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        Label:
+            text: "Loading..."
+            color: (0.92, 0.92, 0.92, 1)
+            font_size: 28
+            bold: True
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}

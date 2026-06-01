@@ -12,13 +12,12 @@ from kivy.utils import platform
 
 BASE_DIR = Path(__file__).resolve().parent
 
+from kivy.core.window import Window
+
 # Keep the desktop test window small, but do not force a fixed window on Android.
 if platform != "android":
     Config.set("graphics", "resizable", True)
 
-from kivy.core.window import Window
-
-if platform != "android":
     Window.size = (450, 800)  # 1920, 1080
 
 # Make bundled assets discoverable when the app is packaged.
@@ -47,6 +46,17 @@ class PlayersWindow(Screen):
         app = App.get_running_app()
         app.shared_players = self.nbr_plyrs
         app.table.nbr_of_players(int(self.nbr_plyrs))
+
+
+class LoadingWindow(Screen):
+    def on_enter(self, *args):
+        # Defer the first real screen until the window has had a chance to draw.
+        Clock.schedule_once(self._show_first_screen, 0.15)
+
+    def _show_first_screen(self, _dt):
+        Window.canvas.ask_update()
+        if self.manager is not None:
+            self.manager.current = "p_number"
 
 
 #second screen (page)
@@ -239,23 +249,32 @@ class SelectorApp(App):
 
     def build(self):
         """ Build app """
+        from elements import factions, players
+        from table import Table
+
+        # Initialize shared data before KV rules are evaluated.
+        # faction_window.kv references app.fc during load, so it must exist here.
+        self.table = Table()
+        self.pl = players
+        self.fc = factions
+
         resource_add_path(str(BASE_DIR))
         resource_add_path(str(BASE_DIR / "images"))
         return Builder.load_file(str(BASE_DIR / "main.kv"))
 
     def on_start(self):
         """ Initialize app """
-        Clock.schedule_once(self._deferred_init, 0)
+        Clock.schedule_once(self._force_initial_redraw, 0)
 
-    def _deferred_init(self, _td):
-        """ Initialize app elements """
-        from elements import factions, players
-        from  table import Table
+    def on_resume(self):
+        """ Refresh the window after Android returns from background. """
+        Clock.schedule_once(self._force_initial_redraw, 0)
 
-        # Create game table
-        self.table = Table()
-        self.pl = players
-        self.fc = factions
+    def _force_initial_redraw(self, _dt):
+        """ Nudge the first frame onto the screen on drivers that miss it. """
+        if self.root is not None and self.root.canvas is not None:
+            self.root.canvas.ask_update()
+        Window.canvas.ask_update()
 
 
 if __name__ == "__main__":
