@@ -12,7 +12,11 @@ class Table:
 
     def set_game(self, fcts):
         # Get copy of factions to draw from
-        self.factions_pool = fcts
+        self.factions_pool = list(fcts)
+
+        # Bail out early if the selection is incomplete.
+        if len(self.factions_pool) < self.players:
+            return False
 
         #Draw factions
         self.draw()
@@ -30,6 +34,7 @@ class Table:
 
         # Clean fon new selection
         self.factions_pool.clear()
+        return True
 
     def draw(self):
         # Probably unnecessary complicated

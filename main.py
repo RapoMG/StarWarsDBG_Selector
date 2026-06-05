@@ -18,7 +18,7 @@ from kivy.core.window import Window
 if platform != "android":
     Config.set("graphics", "resizable", True)
 
-    Window.size = (450, 800)  # 1920, 1080
+    Window.size = (450, 800)  # (1080, 1920)
 
 # Make bundled assets discoverable when the app is packaged.
 resource_add_path(str(BASE_DIR))
@@ -87,11 +87,13 @@ class FactionsWindow(Screen):
         decks = 0
         plrs = App.get_running_app().shared_players
         self.ids.hidden_next.opacity = 0
+        self.ids.hidden_next.disabled = True
         for i in range(len(self.chk)):
             if self.chk[i] == True:  # can't be short; without Boolean any object pass as True
                 decks += 1
                 if decks >= int(plrs):
                     self.ids.hidden_next.opacity = 1
+                    self.ids.hidden_next.disabled = False
 
 
     def set_flipper(self, instance, value):
@@ -139,12 +141,16 @@ class FactionsWindow(Screen):
         if self.chk[6]: selected.append(src.fc[4])
 
         # Setting table
-        app.table.set_game(selected)
+        if not app.table.set_game(selected):
+            return False
+
         # Clean selection list
         selected.clear()
 
         # neutral deck visibility
         app.neut = self.ids.neut_check.active
+        app.root.current = "result"
+        return True
 
     def is_neutral(self):
         # Option hidden for 3 players game
