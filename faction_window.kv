@@ -11,7 +11,7 @@
         Summary:
             # Value shared in app class
             text: f"{app.shared_players} players game"
-            font_size: 20
+            font_size: min(Window.width, Window.height) * 0.03
 
             pos_hint: {"center_y":.94, "center_x":0.5}
 
@@ -93,7 +93,7 @@
                 text: f"Random neutral deck"
                 italic: True
                 color: (0.64, 0.64, 0.64)
-                font_size: 20
+                font_size: min(Window.width, Window.height) * 0.03
 
                 opacity: 1
                 size_hint_y: 0.4
@@ -106,15 +106,14 @@
                 on_release: root.updt_stat()
 
         Back:
-            text: "Go back"
+            text: "Regroup."
             on_release:
                 app.root.current = "p_number"
 
         Next:
             id: hidden_next
-            text: "All wings report in"
+            text: "All wings report in!"
             opacity: 0
             on_release:
                 root.draw()
-                app.root.current = "result"
 
