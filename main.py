@@ -210,6 +210,7 @@ class DrawResultsWindow(Screen):
                 if app.pl[2].first: st3 = " (starts)"
                 self.ids.f_line3.text = f"{app.pl[2].faction.name}\n commanded by {app.pl[2].name}{st3} "
                 self.ids.con_line2.text = "and against"
+                self.ids.n_line.opacity = 0  # Neutral deck hidden (3 players deck used)
 
             # Neutral deck
             if app.neut: self.ids.n_line.text = f"Neutral deck: {app.table.neut[0]}"
@@ -227,6 +228,7 @@ class DrawResultsWindow(Screen):
         self.ids.f_line3.text = ""
         self.ids.f_line4.text = ""
         self.ids.n_line.text = ""
+        self.ids.n_line.opacity = 1  # Neutral deck visible
 
 class WindowManager(ScreenManager):
     pass
