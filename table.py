@@ -2,15 +2,26 @@ from elements import neutral, players as names
 from random import randrange, shuffle
 
 class Table:
+    """
+    Game table class.
+    """
     def __init__(self):
         self.players = 0
         self.factions_pool = []
         self.neut = neutral
 
     def nbr_of_players(self, val):
+        """
+        Set number of players.
+        """
         self.players = val
 
     def set_game(self, fcts):
+        """
+        Set game.
+        Returns:
+            bool: True if the selection is complete, False otherwise.
+        """
         # Get copy of factions to draw from
         self.factions_pool = list(fcts)
 
@@ -37,6 +48,9 @@ class Table:
         return True
 
     def draw(self):
+        """
+        Draw factions.
+        """
         # Probably unnecessary complicated
         # draw factions
         f = 0 # Already drawn factions
@@ -59,6 +73,9 @@ class Table:
 
 
     def first_player(self):
+        """
+        Draw first player.
+        """
         # draw first player
 
         # A loop used to create teams in a game for 4 players
@@ -89,6 +106,9 @@ class Table:
 
 
     def players3(self):
+        """
+        Set starter for 3 players.
+        """
         # If mando and one set, then check for starter
         no_mando = True
 
@@ -111,6 +131,9 @@ class Table:
 
 
     def players4(self):
+        """
+        Set starter for 4 players.
+        """
         # Select 1st player twice: it's starting team
 
         # 1st starting player
@@ -120,5 +143,8 @@ class Table:
         self.first_player()
 
     def neutral(self):
+        """
+        Random neutral deck as list shuffle, to change if there will be more than two decks.
+        """
         #random neutral deck as list shuffle, to change if there will be more than two decks
         shuffle(self.neut)

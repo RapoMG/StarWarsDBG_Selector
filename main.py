@@ -28,21 +28,33 @@ resource_add_path(str(BASE_DIR / "images"))
 ### Multiple Screens
 # Faction draw first screen (page)
 class PlayersWindow(Screen):
+    """
+    Player selection screen.
+    """
     nbr_plyrs = StringProperty("2")
 
     def incr(self):
+        """
+        Increases number up to 4.
+        """
         #increases number up to 4
         number = int(self.nbr_plyrs)
         if number < 4: number += 1
         self.nbr_plyrs = str(number)
 
     def decr(self):
+        """
+        Decreases value down to 2.
+        """
         #decreases value down to 2
         number = int(self.nbr_plyrs)
         if number > 2: number -= 1
         self.nbr_plyrs = str(number)
 
     def players(self):
+        """
+        Save value in the 'shared app' property.
+        """
         # Save value in the 'shared app' property
         app = App.get_running_app()
         app.shared_players = self.nbr_plyrs
@@ -50,6 +62,9 @@ class PlayersWindow(Screen):
 
 
 class LoadingWindow(Screen):
+    """
+    Loading screen.
+    """
     def on_enter(self, *args):
         # Defer the first real screen until the window has had a chance to draw.
         Clock.schedule_once(self._show_first_screen, 0.15)
@@ -62,11 +77,17 @@ class LoadingWindow(Screen):
 
 # Faction draw second screen (page)
 class FactionsWindow(Screen):
+    """
+    Faction selection screen.
+    """
     # Checkers status
     chk:List[Optional[bool]] = [None, None, None, None, None, None, None]
     # set1, set1_f1 set1_f2, set2, set2_f1,set2_f2,exp1
 
     def updt_stat(self):
+        """
+        Update values of checkers. Calls hidden()
+        """
         # Update values of checkers
         self.chk[1] = True if self.ids.set1_f1.state == "down" else False
         self.chk[2] =  True if self.ids.set1_f2.state == "down" else False
@@ -83,6 +104,10 @@ class FactionsWindow(Screen):
         self.hidden()
 
     def hidden(self):
+        """
+        Check if the number of selected factions equals the number of players.
+        If so, show the next window button.
+        """
         # show hidden button if selected factions equals number of players
         decks = 0
         plrs = App.get_running_app().shared_players
@@ -96,6 +121,9 @@ class FactionsWindow(Screen):
                     self.ids.hidden_next.disabled = False
 
     def set_flipper(self, instance, value):
+        """
+        Check or uncheck all factions in a set
+        """
         # Change status for whole set1
         if instance == self.chk[0]:
             if value:
@@ -115,6 +143,9 @@ class FactionsWindow(Screen):
                 self.ids.set2_f2.state = "normal"
 
     def set_splitter(self):
+        """
+        Uncheck the set if not all factions are checked
+        """
         # Unchecked faction unchecks set1
         if self.ids.set1_f1.state == "down" and self.ids.set1_f2.state == "down":
             self.ids.set1.state = "down"
@@ -128,6 +159,9 @@ class FactionsWindow(Screen):
             self.ids.set2.state = "normal"
 
     def draw(self):
+        """
+        Draw the selected factions and prepare the starting player
+        """
         # Number of players and factions compared in hidden() method
         # Prepare selected factions
         app = App.get_running_app()
@@ -152,6 +186,9 @@ class FactionsWindow(Screen):
         return True
 
     def is_neutral(self):
+        """
+        Hide neutral deck option for 3 players game
+        """
         # Option hidden for 3 players game
         if int(App.get_running_app().shared_players) == 3:
             self.ids.neut_check.opacity = 0
@@ -161,8 +198,14 @@ class FactionsWindow(Screen):
 
 # Faction draw third screen (page)
 class DrawResultsWindow(Screen):
+    """
+    Draw results and starting player
+    """
 
     def result(self):
+        """
+        Display the draw results and starting player switching lines to display depending on the number of players.
+        """
         # Access shared variables
         app = App.get_running_app()
         # Number of players
@@ -220,6 +263,10 @@ class DrawResultsWindow(Screen):
 
 
     def clean(self):
+        """
+        Reset the draw results and text when going back to the previous screen
+        """
+
         # Reset draws
         for i in range(4):
             App.get_running_app().pl[i].add_faction(None)

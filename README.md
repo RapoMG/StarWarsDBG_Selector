@@ -11,7 +11,9 @@ The app then displays the result for each player and appoints the first player.
 
 ## Screenshot
 
-![Faction selector window](images/Factions_window.jpg)
+<p align="center">
+  <img src="images/Factions_window.jpg" alt="Faction selector window" width="720">
+</p>
 
 ## Requirements
 

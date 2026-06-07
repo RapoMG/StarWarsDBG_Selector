@@ -1,11 +1,11 @@
 # To Do Order
 
-1. Faction names pics
+1. ~~Faction names pics~~
 2. ~~Missing Neutral~~
-3. Switch factions buttons
+3. ~~Switch factions buttons~~
 4. New first window
 5. ~~Bubble speech pics for existing buttons~~
-6. New first window
+6. Setting players names
 7. Start campaign after 2 players draw
 8. Campaign list window
 9. Campaign details
@@ -14,7 +14,7 @@
 
 # Display Factions
 
-## Replace Names and Sets
+## ~~Replace Names and Sets~~
 Replace text with pictures:
 - Core (purple and black)
   - Rebels (red)
@@ -25,7 +25,7 @@ Replace text with pictures:
 - Mandalorian (green)
 - Random neutral deck
 
-## Switch Pictures Dim/Normal
+## ~~Switch Pictures Dim/Normal~~
 - Add pictures switching function to main.py
 - Add checkbox-like function for names
 
@@ -45,7 +45,7 @@ TeamSwitch:
     size_hint: 0.5, 0.2
 ```
 
-## Missing Neutral on 3 Players
+## ~~Missing Neutral on 3 Players~~
 
 ---
 
