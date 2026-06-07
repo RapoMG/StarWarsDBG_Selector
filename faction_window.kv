@@ -15,105 +15,112 @@
 
             pos_hint: {"center_y":.94, "center_x":0.5}
 
-        GridLayout:
-            rows: 8
-            cols: 2
+        # Core set factions
+        Faction_switch:
+            id: set1
+            background_normal: 'fact_buttons/core_off.png'
+            background_down: 'fact_buttons/core_on.png'
 
-            size_hint_x: 0.8
-            size_hint_y: 0.50
-            pos_hint: {"center_y":.62, "center_x":0.59}
+            size_hint: (0.45,0.06)
+            pos_hint: {"center_y":.87, "center_x":0.5}
 
-            Set:
-                text: f"{app.fc[0].box}"
+            on_release:
+                root.updt_stat() # Necessary to work with first use
+                root.set_flipper(self, True if self.state == "down" else False)
+                root.updt_stat()
 
-            CheckBox:
-                id: set1
-                on_release:
-                    root.updt_stat() # Necessary to work with first use
-                    root.set_flipper(self, self.active)
-                    root.updt_stat()
+        # Rebel faction
+        Faction_switch:
+            id: set1_f1
+            background_normal: 'fact_buttons/reb_off.png'
+            background_down: 'fact_buttons/reb_on.png'
 
-            Faction:
-                text: f"{app.fc[0].name}"
+            pos_hint: {"center_y":.78, "center_x":0.23}
+            on_release:
+                root.set_splitter()
+                root.updt_stat()
 
-            CheckBox:
-                id: set1_f1
-                on_release:
-                    root.set_splitter()
-                    root.updt_stat()
+        # Empire faction
+        Faction_switch:
+            id: set1_f2
+            background_normal: 'fact_buttons/emp_off.png'
+            background_down: 'fact_buttons/emp_on.png'
 
-            Faction:
-                text: f"{app.fc[1].name}"
+            pos_hint: {"center_y":.78, "center_x":0.73}
 
-            CheckBox:
-                id: set1_f2
-                on_release:
-                    root.set_splitter()
-                    root.updt_stat()
+            on_release:
+                root.set_splitter()
+                root.updt_stat()
 
-            Set:
-                text: f"{app.fc[2].box}"
+        # Clone Wars factions
+        Faction_switch:
+            id: set2
+            background_normal: 'fact_buttons/clone_off.png'
+            background_down: 'fact_buttons/clone_on.png'
 
-            CheckBox:
-                id: set2
-                on_release:
-                    root.updt_stat() # Necessary to work with first use
-                    root.set_flipper(self, self.active)
-                    root.updt_stat()
+            pos_hint: {"center_y":.67, "center_x":0.5}
 
-            Faction:
-                text: f"{app.fc[2].name}"
+            on_release:
+                root.updt_stat() # Necessary to work with first use
+                root.set_flipper(self, True if self.state == "down" else False)
+                root.updt_stat()
 
-            CheckBox:
-                id: set2_f1
-                on_release:
-                    root.set_splitter()
-                    root.updt_stat()
+        # Republic faction
+        Faction_switch:
+            id: set2_f1
+            background_normal: 'fact_buttons/rep_off.png'
+            background_down: 'fact_buttons/rep_on.png'
 
-            Faction:
-                text: f"{app.fc[3].name}"
+            pos_hint: {"center_y":.58, "center_x":0.23}
+            on_release:
+                root.set_splitter()
+                root.updt_stat()
 
-            CheckBox:
-                id: set2_f2
-                on_release:
-                    root.set_splitter()
-                    root.updt_stat()
+        # Separatists faction
+        Faction_switch:
+            id: set2_f2
+            background_normal: 'fact_buttons/sep_off.png'
+            background_down: 'fact_buttons/sep_on.png'
 
-            Set:
-                text: f"{app.fc[4].name}"
+            pos_hint: {"center_y":.58, "center_x":0.73}
 
+            on_release:
+                root.set_splitter()
+                root.updt_stat()
 
-            CheckBox:
-                id: exp1
-                on_release: root.updt_stat()
+        # Mandalorian faction (Expansion 1)
+        Faction_switch:
+            id: exp1
+            background_normal: 'fact_buttons/mand_off.png'
+            background_down: 'fact_buttons/mand_on.png'
 
-            # Neutral deck draw
-            Label:
-                id: neut_lab
-                text: f"Random neutral deck"
-                italic: True
-                color: (0.64, 0.64, 0.64)
-                font_size: min(Window.width, Window.height) * 0.03
+            pos_hint: {"center_y":.47, "center_x":0.5}
 
-                opacity: 1
-                size_hint_y: 0.4
-                pos: self.pos
+            on_release: root.updt_stat()
 
-            CheckBox:
-                id: neut_check
-                active: True
-                opacity: 1
-                on_release: root.updt_stat()
+        # Neutral deck (From random set)
+        Faction_switch:
+            id: neut_check
+            background_normal: 'fact_buttons/neut_off.png'
+            background_down: 'fact_buttons/neut_on.png'
 
+            pos_hint: {"center_y":.36, "center_x":0.5}
+
+            state: 'down'
+            opacity: 1
+            on_release: root.updt_stat()
+
+        ########################
+        # Previous window button
         Back:
             text: "Regroup."
             on_release:
                 app.root.current = "p_number"
 
+        # Next window button
         Next:
             id: hidden_next
             text: "All wings report in!"
             opacity: 0
             on_release:
                 root.draw()
-
