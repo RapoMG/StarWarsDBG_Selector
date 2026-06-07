@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import List, Optional
 
 from kivy.app import App
 from kivy.config import Config
@@ -25,7 +26,7 @@ resource_add_path(str(BASE_DIR))
 resource_add_path(str(BASE_DIR / "images"))
 
 ### Multiple Screens
-#First screen (page)
+# Faction draw first screen (page)
 class PlayersWindow(Screen):
     nbr_plyrs = StringProperty("2")
 
@@ -59,28 +60,27 @@ class LoadingWindow(Screen):
             self.manager.current = "p_number"
 
 
-#second screen (page)
+# Faction draw second screen (page)
 class FactionsWindow(Screen):
     # Checkers status
-    chk = [None, None, None, None, None, None, None]
+    chk:List[Optional[bool]] = [None, None, None, None, None, None, None]
     # set1, set1_f1 set1_f2, set2, set2_f1,set2_f2,exp1
 
     def updt_stat(self):
         # Update values of checkers
-        self.chk[1] = self.ids.set1_f1.active
-        self.chk[2] =  self.ids.set1_f2.active
+        self.chk[1] = True if self.ids.set1_f1.state == "down" else False
+        self.chk[2] =  True if self.ids.set1_f2.state == "down" else False
 
-        self.chk[4] =  self.ids.set2_f1.active
-        self.chk[5] = self.ids.set2_f2.active
+        self.chk[4] =  True if self.ids.set2_f1.state == "down" else False
+        self.chk[5] = True if self.ids.set2_f2.state == "down" else False
 
-        self.chk[6] =  self.ids.exp1.active
+        self.chk[6] =  True if self.ids.exp1.state == "down" else False
 
         # Sets checkers instance to test against flipper
         self.chk[0] = self.ids.set1
         self.chk[3] =  self.ids.set2
 
         self.hidden()
-
 
     def hidden(self):
         # show hidden button if selected factions equals number of players
@@ -95,18 +95,17 @@ class FactionsWindow(Screen):
                     self.ids.hidden_next.opacity = 1
                     self.ids.hidden_next.disabled = False
 
-
     def set_flipper(self, instance, value):
         # Change status for whole set1
         if instance == self.chk[0]:
             if value:
-                self.ids.set1_f1.active = True
-                self.ids.set1_f2.active = True
+                self.ids.set1_f1.state = "down"
+                self.ids.set1_f2.state = "down"
             else:
                 self.ids.set1_f1.state = "normal"
                 self.ids.set1_f2.state = "normal"
 
-        # Change status for whole set1
+        # Change status for whole set2
         if instance == self.chk[3]:
             if value:
                 self.ids.set2_f1.state = "down"
@@ -117,16 +116,16 @@ class FactionsWindow(Screen):
 
     def set_splitter(self):
         # Unchecked faction unchecks set1
-        if self.ids.set1_f1.active and self.ids.set1_f2.active:
-            self.ids.set1.active = True
+        if self.ids.set1_f1.state == "down" and self.ids.set1_f2.state == "down":
+            self.ids.set1.state = "down"
         else:
-            self.ids.set1.active = False
+            self.ids.set1.state = "normal"
 
         ## Unchecked faction unchecks set 2
-        if self.ids.set2_f1.active and self.ids.set2_f2.active:
-            self.ids.set2.active = True
+        if self.ids.set2_f1.state == "down" and self.ids.set2_f2.state == "down":
+            self.ids.set2.state = "down"
         else:
-            self.ids.set2.active = False
+            self.ids.set2.state = "normal"
 
     def draw(self):
         # Number of players and factions compared in hidden() method
@@ -148,21 +147,19 @@ class FactionsWindow(Screen):
         selected.clear()
 
         # neutral deck visibility
-        app.neut = self.ids.neut_check.active
+        app.neut = True if self.ids.neut_check.state == "down" else False
         app.root.current = "result"
         return True
 
     def is_neutral(self):
         # Option hidden for 3 players game
         if int(App.get_running_app().shared_players) == 3:
-            self.ids.neut_lab.opacity = 0
             self.ids.neut_check.opacity = 0
         else:
-            self.ids.neut_lab.opacity = 1
             self.ids.neut_check.opacity = 1
 
 
-#thrid screen (page)
+# Faction draw third screen (page)
 class DrawResultsWindow(Screen):
 
     def result(self):
@@ -216,6 +213,7 @@ class DrawResultsWindow(Screen):
                 if app.pl[2].first: st3 = " (starts)"
                 self.ids.f_line3.text = f"{app.pl[2].faction.name}\n commanded by {app.pl[2].name}{st3} "
                 self.ids.con_line2.text = "and against"
+                self.ids.n_line.opacity = 0  # Neutral deck hidden (3 players deck used)
 
             # Neutral deck
             if app.neut: self.ids.n_line.text = f"Neutral deck: {app.table.neut[0]}"
@@ -233,6 +231,7 @@ class DrawResultsWindow(Screen):
         self.ids.f_line3.text = ""
         self.ids.f_line4.text = ""
         self.ids.n_line.text = ""
+        self.ids.n_line.opacity = 1  # Neutral deck visible
 
 class WindowManager(ScreenManager):
     pass
