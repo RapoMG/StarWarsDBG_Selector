@@ -1,0 +1,122 @@
+<InfoPopup>
+
+    title_size: 0  # no title line
+    separator_height:0 # no separator line
+
+    auto_dismiss: True # auto_dismiss set to True to allow user to dismiss popup
+    size_hint: (0.9, 0.9)
+
+    background: 'images/backgrounds/panel.png'
+
+
+    FloatLayout:
+        TabbedPanel:
+            do_default_tab: False  # prevent default tab
+            pos_hint: {"center_y":.56, "center_x":0.5}
+            size_hint: (0.99, 0.9)
+            tab_pos: 'top_mid'
+            background_image: 'images/backgrounds/fog.png'
+
+
+            PopPanel:
+                text: "Players"
+
+                # Layout inside tab Players
+                FloatLayout:
+
+                    Label:
+                        size_hint: (1, 0.3)
+                        pos_hint: {"center_y":.9, "center_x":0.5}
+
+                        text: "_Leaders names_"
+                        color: (0.33, 1, 0.73, 0.812)
+                        font_size: min(Window.width, Window.height) * 0.07
+                        bold: True
+
+                    Player_name:
+                        id: pl1_name
+                        pos_hint: {"center_y":.75, "center_x":0.45}
+                        hint_text: "Player 1" # max 16 char
+                        text: root.player1_name
+
+                    Player_name:
+                        id: pl2_name
+                        pos_hint: {"center_y":.64, "center_x":0.5}
+                        hint_text: "Player 2"
+                        text: root.player2_name
+
+                    Player_name:
+                        id: pl3_name
+                        pos_hint: {"center_y":.53, "center_x":0.55}
+                        hint_text: "Player 3"
+                        text: root.player3_name
+
+                    Player_name:
+                        id: pl4_name
+                        pos_hint: {"center_y":.42, "center_x":0.5}
+                        hint_text: "Player 4"
+                        text: root.player4_name
+
+                    # Save players names
+                    Button:
+                        text: "Confirm"
+                        color: (0.33, 1, 0.73, 0.812)
+                        pos_hint: {"center_y":.2, "center_x":0.5}
+                        size_hint: (.45, 0.09)
+                        background_color: (0,0,0,0)
+
+                        # Border around button
+                        canvas.before:
+                            Color:
+                                rgba: (0.33, 1, 0.73, 0.812)
+                            Line:
+                                rounded_rectangle:
+                                    self.x, self.y, self.width, self.height, 10
+
+#                                rectangle: self.x, self.y, self.width, self.height
+#                                width: 2
+                        on_release:
+                            root.update()
+                            root.dismiss()
+
+            PopPanel:
+                text: "About"
+
+                BoxLayout:
+                    Label:
+                        markup: True
+                        text: root.about
+
+
+        Button:
+            text: 'Return'
+            size_hint: (0.5, 0.10)
+            pos_hint :{'center_x':0.5, 'center_y':0.048}
+            background_normal: 'images/nav_buttons/tab_fog_med.png'
+            background_down: 'images/nav_buttons/tab_fog_dark.png'
+
+            canvas.after:
+                # Normal
+                Color:
+                    rgba: (0.33, 1, 0.73, 0.812) if self.state == 'normal' else (0,0,0,0)
+                Line:
+                    points:
+                        (self.x, self.top,
+                        self.x, self.y,
+                        self.right, self.y,
+                        self.right, self.top)
+                    width: 1
+
+                # Down
+                Color:
+                    rgba: (0.33, 1, 0.73, 0.812) if self.state == 'down' else (0,0,0,0)
+                Line:
+                    points:
+                        (self.x, self.top,
+                        self.x, self.y,
+                        self.right, self.y,
+                        self.right, self.top,
+                        self.x, self.top)
+                    width: 4
+
+            on_release: root.dismiss()

@@ -31,6 +31,9 @@ class Player:
         """
         self.faction = faction
 
+    def rename(self, name: str):
+        self.name = name
+
 
 # Add setup factions
 factions = [

@@ -9,6 +9,7 @@ from kivy.lang import Builder
 from kivy.resources import resource_add_path
 from kivy.properties import StringProperty
 from kivy.uix.screenmanager import Screen, ScreenManager
+from kivy.uix.popup import Popup
 from kivy.utils import platform
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -25,7 +26,25 @@ if platform != "android":
 resource_add_path(str(BASE_DIR))
 resource_add_path(str(BASE_DIR / "images"))
 
-### Multiple Screens
+### Multiple Screens ###
+
+## Main Screen ##
+class WelcomeWindow(Screen):
+    """
+    Main window.
+    """
+    pass
+
+## Campaign Screens ##
+
+class CampaignWindow(Screen):
+    """
+    Campaign selection screen.
+    """
+    pass
+
+## Draw Factions Screens ##
+
 # Faction draw first screen (page)
 class PlayersWindow(Screen):
     """
@@ -72,7 +91,7 @@ class LoadingWindow(Screen):
     def _show_first_screen(self, _dt):
         Window.canvas.ask_update()
         if self.manager is not None:
-            self.manager.current = "p_number"
+            self.manager.current = "welcome"
 
 
 # Faction draw second screen (page)
@@ -210,6 +229,7 @@ class DrawResultsWindow(Screen):
         app = App.get_running_app()
         # Number of players
         n = int(app.shared_players)
+        players = app.data.get_players()  # Get players from storage
 
         # Starting player txt
         st1=""
@@ -222,16 +242,16 @@ class DrawResultsWindow(Screen):
             st = True
             frc = True
             for i in range (4):
-                if app.pl[i].first and st:
-                    self.ids.f_line1.text = f"{app.pl[i].faction.name}\n commanded by {app.pl[i].name}"
+                if players[i].first and st:
+                    self.ids.f_line1.text = f"{players[i].faction.name}\n commanded by {players[i].name}"
                     st = False
-                elif app.pl[i].first and not st:
-                    self.ids.f_line2.text = f"{app.pl[i].faction.name}\n led by {app.pl[i].name}"
-                elif not app.pl[i].first and frc:
-                    self.ids.f_line3.text = f"{app.pl[i].faction.name}\n commanded by {app.pl[i].name}"
+                elif players[i].first and not st:
+                    self.ids.f_line2.text = f"{players[i].faction.name}\n led by {players[i].name}"
+                elif not players[i].first and frc:
+                    self.ids.f_line3.text = f"{players[i].faction.name}\n commanded by {players[i].name}"
                     frc = False
                 else:
-                    self.ids.f_line4.text = f"and {app.pl[i].faction.name}\n led by {app.pl[i].name}"
+                    self.ids.f_line4.text = f"and {players[i].faction.name}\n led by {players[i].name}"
             # Connecting lines
             self.ids.con_line1.text = "in alliance with"
             self.ids.con_line2.text = "starting their war effort against"
@@ -244,23 +264,22 @@ class DrawResultsWindow(Screen):
         # 2 and 3 players game
         else:
             # 1st player
-            if app.pl[0].first: st1 = " (starts)"
-            self.ids.f_line1.text = f"{app.pl[0].faction.name}\n commanded by {app.pl[0].name}{st1} "
+            if players[0].first: st1 = "\n (starts)"
+            self.ids.f_line1.text = f"{players[0].faction.name}\n commanded by {players[0].name}{st1} "
 
             #2nd player
-            if app.pl[1].first: st2 = " (starts)"
-            self.ids.f_line2.text = f"{app.pl[1].faction.name}\n leaded by {app.pl[1].name}{st2} "
+            if players[1].first: st2 = " (starts)"
+            self.ids.f_line2.text = f"{players[1].faction.name}\n leaded by {players[1].name}{st2} "
 
             # 3rd player
             if n == 3:
-                if app.pl[2].first: st3 = " (starts)"
-                self.ids.f_line3.text = f"{app.pl[2].faction.name}\n commanded by {app.pl[2].name}{st3} "
+                if players[2].first: st3 = " (starts)"
+                self.ids.f_line3.text = f"{players[2].faction.name}\n commanded by {players[2].name}{st3} "
                 self.ids.con_line2.text = "and against"
                 self.ids.n_line.opacity = 0  # Neutral deck hidden (3 players deck used)
 
             # Neutral deck
             if app.neut: self.ids.n_line.text = f"Neutral deck: {app.table.neut[0]}"
-
 
     def clean(self):
         """
@@ -280,35 +299,77 @@ class DrawResultsWindow(Screen):
         self.ids.n_line.text = ""
         self.ids.n_line.opacity = 1  # Neutral deck visible
 
+## Utilities ##
+class InfoPopup(Popup):
+    """
+    Popup window with setting players names and information about the app.
+    Values are passed from SelectorApp.open_settings().
+    """
+    # TODO
+    # Add information about the app
+
+
+    # Properties for players names
+    player1_name = StringProperty("")
+    player2_name = StringProperty("")
+    player3_name = StringProperty("")
+    player4_name = StringProperty("")
+
+    # Property for information about the app
+    about = StringProperty("")
+
+    def update(self):
+        """
+        Save players names to storage
+        """
+        # Get players names from text fields
+        players = [
+            self.ids.pl1_name.text,
+            self.ids.pl2_name.text,
+            self.ids.pl3_name.text,
+            self.ids.pl4_name.text
+        ]
+
+        app = App.get_running_app()
+        # Update players names in storage
+        app.data.update_players(players)
+        # Save changes to file
+        app.data.save_file()
+
+
 class WindowManager(ScreenManager):
     pass
-
 
 
 class SelectorApp(App):
     """ Main app """
     # Shared data accessible by all screens
     shared_players = StringProperty("Waiting for players...")
-    #fc = factions
-    #pl = players
+
     table = None
-    fc = None
-    pl = None
+    data = None
+    fc = None  # factions
+    pl = None  # players
 
     # Should neutral deck be drawn
     neut = True
 
-
     def build(self):
         """ Build app """
-        from elements import factions, players
+        from elements import factions
         from table import Table
+        from storage import Data
+
+        # Load saved data
+        self.data = Data()
+        self.data.load_file()
 
         # Initialize shared data before KV rules are evaluated.
         # faction_window.kv references app.fc during load, so it must exist here.
-        self.table = Table()
-        self.pl = players
-        self.fc = factions
+
+        self.pl = self.data.get_players()
+        self.fc = factions # call factions from elements.py
+        self.table = Table(self.pl)
 
         resource_add_path(str(BASE_DIR))
         resource_add_path(str(BASE_DIR / "images"))
@@ -327,6 +388,26 @@ class SelectorApp(App):
         if self.root is not None and self.root.canvas is not None:
             self.root.canvas.ask_update()
         Window.canvas.ask_update()
+
+    def open_settings(self):
+        """ Open settings and info popup """
+        app = App.get_running_app()
+        # Prepare values
+        players = app.data.get_players()
+        try:
+            about = Path("about.md").read_text(encoding="utf-8")
+        except FileNotFoundError:
+            about = "Missing file"
+
+        popup = InfoPopup(
+            player1_name=players[0].name,
+            player2_name=players[1].name,
+            player3_name=players[2].name,
+            player4_name=players[3].name,
+            about=about,
+        )
+        # Open popup with prepared values
+        popup.open()
 
 
 if __name__ == "__main__":

@@ -1,12 +1,13 @@
-from elements import neutral, players as names
+from elements import neutral
 from random import randrange, shuffle
 
 class Table:
     """
     Game table class.
     """
-    def __init__(self):
+    def __init__(self, names):
         self.players = 0
+        self.names = names # List of players (Player objects)
         self.factions_pool = []
         self.neut = neutral
 
@@ -60,15 +61,15 @@ class Table:
 
             # random faction for the selected players
             # Check if player already have faction
-            if names[rnd].faction is None:
+            if self.names[rnd].faction is None:
                 rndf = randrange(0, len(self.factions_pool))
-                names[rnd].add_faction(self.factions_pool.pop(rndf))  # ERR for players equal to no. of factions
+                self.names[rnd].add_faction(self.factions_pool.pop(rndf))  # ERR for players equal to no. of factions
                 f += 1
             # last player if
             if self.players - f == 1 and len(self.factions_pool) == 1:
                 for p in range(self.players):  # find last player
-                    if names[p].faction is None:  # last player dont have the faction
-                        names[p].add_faction(self.factions_pool[0])  # last faction for last player
+                    if self.names[p].faction is None:  # last player dont have the faction
+                        self.names[p].add_faction(self.factions_pool[0])  # last faction for last player
                         f += 1
 
 
@@ -82,8 +83,8 @@ class Table:
         while True:
             frst_plr = randrange(0, self.players)
             # Check if the player was selected previously
-            if not names[frst_plr].first:
-                names[frst_plr].first = True
+            if not self.names[frst_plr].first:
+                self.names[frst_plr].first = True
                 break
 
 
@@ -94,12 +95,12 @@ class Table:
         b = pl_pos[1]
 
         # Check if its same set
-        if names[a].faction.box == names[b].faction.box:
+        if self.names[a].faction.box == self.names[b].faction.box:
             # if Yes, check who has starting faction
-            if names[a].faction.starter:
-                names[a].first = True
+            if self.names[a].faction.starter:
+                self.names[a].first = True
             else:
-                names[b].first = True
+                self.names[b].first = True
         # Different set: Random 1st player
         else:
             self.first_player()
@@ -115,7 +116,7 @@ class Table:
         # Mandalorian 1st player rules:
         # Check if Mandalorian faction is in play
         for i in range(self.players):
-            if names[i].faction.box == "Mandalorian":
+            if self.names[i].faction.box == "Mandalorian":
                 # mark other players
                 other = [0,1,2]
                 other.remove(i)

@@ -3,12 +3,13 @@
 1. ~~Faction names pics~~
 2. ~~Missing Neutral~~
 3. ~~Switch factions buttons~~
-4. New first window
+4. ~~New first window~~
 5. ~~Bubble speech pics for existing buttons~~
-6. Setting players names
-7. Start campaign after 2 players draw
-8. Campaign list window
-9. Campaign details
+6. ~~Setting players names~~
+7. Welcome window with text and Jedi font
+8. Start campaign after 2 players draw
+9. Campaign list window
+10. Campaign details
 
 ---
 
@@ -74,6 +75,7 @@ TeamSwitch:
 - Options
 - Draw factions
 - Campaign
+- App name in the middle
 
 ---
 

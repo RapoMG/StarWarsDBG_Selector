@@ -1,0 +1,38 @@
+<WelcomeWindow>
+    name: "welcome"
+
+    FloatLayout:
+        #Call Background object
+        Background:
+
+        # Info /settings button
+        Button:
+            #size_hint: (0.12,0.065)
+            size_hint: 0.15, None
+            height: self.width * 1.05
+            #size_hint: (0.17,0.07)
+            pos_hint: {"center_y":.88, "center_x":0.83}
+            background_normal: 'nav_buttons/info.png'
+            background_down: 'nav_buttons/info.png'
+            on_release: app.open_settings()
+
+        #Insert label here with sw jedi font or image based on it
+
+
+        ########################
+        # Previous window button
+        Next:
+            text: "Single game"
+            on_release:
+                app.root.current = "p_number"
+
+        # Next window button
+        Next:
+            id: Campaign
+            text: "Future Campaign"
+            opacity: 0
+
+            pos_hint :{'center_x':0.5, 'center_y':0.1}
+            size_hint: .55, .16
+            on_release:
+                app.root.current = ""

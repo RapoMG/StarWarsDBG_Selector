@@ -60,7 +60,8 @@
             color: (0.64, 0.64, 0.64)
             opacity: 1
 
-            pos_hint: {"center_y":.30, "center_x":0.5}
+            pos_hint:
+                {"center_y":.30, "center_x":0.5} if app.shared_players == "4" else {"center_y":.60, "center_x":0.5}
 
         Back:
             text: "Choose another path."

@@ -1,5 +1,7 @@
 #:import NoTransition kivy.uix.screenmanager.NoTransition
 #:import Window kivy.core.window.Window
+#:include settings_popup.kv
+#:include welcome_window.kv
 #:include players_window.kv
 #:include faction_window.kv
 #:include draw_result_window.kv
@@ -8,6 +10,7 @@
 ScreenManager:
     transition: NoTransition()
     LoadingWindow:
+    WelcomeWindow:
     PlayersWindow:
     FactionsWindow:
     DrawResultsWindow:
@@ -38,14 +41,14 @@ ScreenManager:
 
     canvas:
         Rectangle:
-            source:'images/background.png'
+            source:'background.png'
             size: root.width, root.height
             pos: self.pos
 
 #Buttons
 <Button>
     font_size: min(Window.width, Window.height) * 0.04
-    size_hint: (0.29,0.12)
+    #size_hint: (0.29,0.12)
 
 <Faction_switch@ToggleButton>
     size_hint: (0.45,0.06)
@@ -76,6 +79,48 @@ ScreenManager:
 
     pos_hint :{'center_x':0.5, 'center_y':0.1}
     size_hint: .55, .16
+
+<Player_name@TextInput>
+    size_hint: (.65, 0.075)
+    font_size: min(Window.width, Window.height) * 0.065
+    halign: "center"
+    multiline: False
+    #foreground_color: (0.004, 0.341, 0.216, 0.812)
+    foreground_color: (0.33, 1, 0.73, 0.812)
+
+    border_margin: (0,4,0,4)
+    background_color: (0,0,0,0)
+    #pos_hint: {"center_x":0.5}
+    canvas.after:
+        Color:
+            rgba: 0.33, 1, 0.73, 0.812
+
+        Line:
+            points: self.x, self.y, self.x, self.top
+            width: 1
+
+        Line:
+            points: self.right, self.y, self.right, self.top
+            width: 1
+
+
+<PopPanel@TabbedPanelItem>:
+    background_normal: 'nav_buttons/tab_fog_dark.png'
+    background_down: 'nav_buttons/tab_fog_med.png'
+    padding: 0
+
+    color: (0.33, 1, 0.73, 0.812)
+    canvas.after:
+        # Active tab (down)
+        Color:
+            rgba: (0.33, 1, 0.73, 0.812) if self.state == 'down' else (0,0,0,0)
+        Line:
+            points:
+                (self.x, self.y,
+                self.x, self.top,
+                self.right, self.top,
+                self.right, self.y)
+            width: 1
 
 #Windows
 <LoadingWindow>:
