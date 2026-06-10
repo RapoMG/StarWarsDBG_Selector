@@ -1,10 +1,10 @@
 #:import NoTransition kivy.uix.screenmanager.NoTransition
 #:import Window kivy.core.window.Window
-#:include settings_popup.kv
-#:include welcome_window.kv
-#:include players_window.kv
-#:include faction_window.kv
-#:include draw_result_window.kv
+#:include windows/settings_popup.kv
+#:include windows/welcome_window.kv
+#:include windows/draw/players_window.kv
+#:include windows/draw/faction_window.kv
+#:include windows/draw/draw_result_window.kv
 
 
 ScreenManager:
@@ -41,7 +41,7 @@ ScreenManager:
 
     canvas:
         Rectangle:
-            source:'background.png'
+            source:'backgrounds/space.png'
             size: root.width, root.height
             pos: self.pos
 
@@ -59,7 +59,6 @@ ScreenManager:
     italic: True
     bold: True
 
-    #background_color: (1,1,1,1)
     background_normal: 'nav_buttons/bubble_right.png'
     background_down: 'nav_buttons/bubble_right_press.png'
 
@@ -85,12 +84,12 @@ ScreenManager:
     font_size: min(Window.width, Window.height) * 0.065
     halign: "center"
     multiline: False
-    #foreground_color: (0.004, 0.341, 0.216, 0.812)
+
     foreground_color: (0.33, 1, 0.73, 0.812)
 
     border_margin: (0,4,0,4)
     background_color: (0,0,0,0)
-    #pos_hint: {"center_x":0.5}
+
     canvas.after:
         Color:
             rgba: 0.33, 1, 0.73, 0.812

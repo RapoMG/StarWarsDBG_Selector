@@ -38,4 +38,4 @@ This application is not affiliated with, endorsed, sponsored by, or approved by 
 
 ## Build
 
-For Android builds, see [`commands.md`](commands.md) for the Buildozer Docker commands used by this project.
+For Android builds, see [`commands.md`](docs/commands.md) for the Buildozer Docker commands used by this project.
