@@ -6,11 +6,13 @@ from kivy.config import Config
 from kivy.clock import Clock
 
 from kivy.lang import Builder
-from kivy.resources import resource_add_path
+from kivy.resources import resource_add_path, resource_find
 from kivy.properties import StringProperty
 from kivy.uix.screenmanager import Screen, ScreenManager
 from kivy.uix.popup import Popup
 from kivy.utils import platform
+
+from kivy.core.text import LabelBase
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -25,6 +27,27 @@ if platform != "android":
 # Make bundled assets discoverable when the app is packaged.
 resource_add_path(str(BASE_DIR))
 resource_add_path(str(BASE_DIR / "images"))
+
+# Fonts
+LabelBase.register(name="Comic",
+                   fn_regular="fonts/HeroikanamikusRegular.otf",
+                   fn_bold="fonts/HeroikanamikusBold.otf",
+                   fn_italic="fonts/HeroikanamikusItalic.otf",
+                   fn_bolditalic="fonts/HeroikanamikusBoldItalic.otf",
+                   )
+
+LabelBase.register(name="Results", fn_regular="fonts/RussoOne-Regular.ttf",)
+LabelBase.register(name="SW", fn_regular="fonts/StarJediHollow-A4lL.ttf",
+                   fn_bold="fonts/StarJedi-DGRW.ttf")
+
+LabelBase.register(name="Holo",
+                   fn_regular="fonts/Firjar-Regular.ttf",
+                   fn_bold="fonts/Firjar-Bold.ttf",
+                   )
+LabelBase.register(name="Holo_Ex",
+                   fn_regular="fonts/FirjarExpanded-Regular.ttf",
+                   fn_bold="fonts/FirjarExpanded-Bold.ttf",
+                   )
 
 ### Multiple Screens ###
 
@@ -305,9 +328,6 @@ class InfoPopup(Popup):
     Popup window with setting players names and information about the app.
     Values are passed from SelectorApp.open_settings().
     """
-    # TODO
-    # Add information about the app
-
 
     # Properties for players names
     player1_name = StringProperty("")
@@ -335,6 +355,14 @@ class InfoPopup(Popup):
         app.data.update_players(players)
         # Save changes to file
         app.data.save_file()
+
+    def link_to_github(self, ref):
+        """
+        Open the app's GitHub page with the project page in the default web browser.
+        """
+        import webbrowser
+        if ref == "homepage":
+            webbrowser.open("https://github.com/RapoMG/StarWarsDBG_Selector")
 
 
 class WindowManager(ScreenManager):
@@ -366,7 +394,6 @@ class SelectorApp(App):
 
         # Initialize shared data before KV rules are evaluated.
         # faction_window.kv references app.fc during load, so it must exist here.
-
         self.pl = self.data.get_players()
         self.fc = factions # call factions from elements.py
         self.table = Table(self.pl)
@@ -394,8 +421,11 @@ class SelectorApp(App):
         app = App.get_running_app()
         # Prepare values
         players = app.data.get_players()
+        about_path = resource_find("about.md")
+        if about_path is None:
+            about_path = BASE_DIR / "about.md"
         try:
-            about = Path("about.md").read_text(encoding="utf-8")
+            about = Path(about_path).read_text(encoding="utf-8")
         except FileNotFoundError:
             about = "Missing file"
 

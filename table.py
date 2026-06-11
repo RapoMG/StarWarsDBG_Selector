@@ -72,13 +72,10 @@ class Table:
                         self.names[p].add_faction(self.factions_pool[0])  # last faction for last player
                         f += 1
 
-
     def first_player(self):
         """
         Draw first player.
         """
-        # draw first player
-
         # A loop used to create teams in a game for 4 players
         while True:
             frst_plr = randrange(0, self.players)
@@ -86,7 +83,6 @@ class Table:
             if not self.names[frst_plr].first:
                 self.names[frst_plr].first = True
                 break
-
 
     # Set Starter
     def players2(self, pl_pos=[0,1]):
@@ -104,7 +100,6 @@ class Table:
         # Different set: Random 1st player
         else:
             self.first_player()
-
 
     def players3(self):
         """
@@ -130,7 +125,6 @@ class Table:
         if no_mando:
             self.first_player()
 
-
     def players4(self):
         """
         Set starter for 4 players.
@@ -147,5 +141,4 @@ class Table:
         """
         Random neutral deck as list shuffle, to change if there will be more than two decks.
         """
-        #random neutral deck as list shuffle, to change if there will be more than two decks
         shuffle(self.neut)

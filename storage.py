@@ -12,7 +12,6 @@ class Data:
     def __init__(self):
         #Default players
         self.players = [Player(f"Player {_+1}") for _ in range(4)]
-        #self.players = [Player("Maciek"), Player("John"), Player("Jane"), Player("Bob")]
 
     @staticmethod
     def file_path() -> str:

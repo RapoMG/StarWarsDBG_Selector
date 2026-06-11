@@ -54,11 +54,3 @@ neutral = [
     factions[0].box,
     factions[2].box,
 ]
-
-# Default players
-players = [
-    Player("Player 1"),
-    Player("Player 2"),
-    Player("Player 3"),
-    Player("Player 4"),
-]

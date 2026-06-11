@@ -25,6 +25,7 @@ ScreenManager:
 
     halign:"center"
     valign:"middle"
+    font_name: "Results"
 
 <Set@Label>
     font_size: min(Window.width, Window.height) * 0.03
@@ -51,12 +52,13 @@ ScreenManager:
     #size_hint: (0.29,0.12)
 
 <Faction_switch@ToggleButton>
-    size_hint: (0.45,0.06)
+    size_hint: (0.40,0.06)
 
 <Next@Button>
     color: (0,0,0,1)
     font_size: min(Window.width, Window.height) * 0.03
     italic: True
+    font_name: "Comic"
     bold: True
 
     background_normal: 'nav_buttons/bubble_right.png'
@@ -70,6 +72,7 @@ ScreenManager:
     color: (0,0,0,1)
     font_size: min(Window.width, Window.height) * 0.03
     italic: True
+    font_name: "Comic"
     bold: True
 
     background_color: (1,1,1,1)
@@ -80,8 +83,9 @@ ScreenManager:
     size_hint: .55, .16
 
 <Player_name@TextInput>
-    size_hint: (.65, 0.075)
+    size_hint: (.655, 0.075)
     font_size: min(Window.width, Window.height) * 0.065
+    font_name: "Holo_Ex"
     halign: "center"
     multiline: False
 
@@ -106,6 +110,7 @@ ScreenManager:
 <PopPanel@TabbedPanelItem>:
     background_normal: 'nav_buttons/tab_fog_dark.png'
     background_down: 'nav_buttons/tab_fog_med.png'
+    font_name: "Holo"
     padding: 0
 
     color: (0.33, 1, 0.73, 0.812)
