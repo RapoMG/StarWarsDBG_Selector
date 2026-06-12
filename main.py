@@ -33,7 +33,7 @@ LabelBase.register(name="Comic",
                    fn_regular="fonts/HeroikanamikusRegular.otf",
                    fn_bold="fonts/HeroikanamikusBold.otf",
                    fn_italic="fonts/HeroikanamikusItalic.otf",
-                   fn_bolditalic="fonts/HeroikanamikusBoldItalic.otf",
+                   fn_bolditalic="fonts/HeroikanamikusBolditalic.otf",
                    )
 
 LabelBase.register(name="Results", fn_regular="fonts/RussoOne-Regular.ttf",)
