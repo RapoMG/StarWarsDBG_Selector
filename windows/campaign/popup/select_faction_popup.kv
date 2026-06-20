@@ -1,0 +1,63 @@
+<SelectFactionPopup>
+
+    title_size: 0  # no title line
+    separator_height:0 # no separator line
+
+    auto_dismiss: True # auto_dismiss set to True to allow user to dismiss popup
+    size_hint: (0.9, 0.35)
+
+    background: 'images/backgrounds/fog.png'
+
+    GridLayout:
+        cols: 1
+        rows: 5
+
+        Button:
+            text: root.field1
+            size_hint_x: 1
+            size_hint_y: None
+            height: self.texture_size[1]
+            on_release:
+                root.assign_faction(root.field1)
+
+        Button:
+            text: root.field2
+            size_hint_x: 1
+            size_hint_y: None
+            height: self.texture_size[1]
+            on_release:
+                root.assign_faction(root.field2)
+
+        Button:
+            text: root.field3
+            size_hint_x: 1
+            size_hint_y: None
+            height: self.texture_size[1]
+            on_release:
+                root.assign_faction(root.field3)
+            opacity: 0 if root.field3 == "" else 1
+
+        Button:
+            text: root.field4
+            size_hint_x: 1
+            size_hint_y: None
+            height: self.texture_size[1]
+            on_release:
+                root.assign_faction(root.field4)
+            opacity: 0 if root.field4 == "" else 1
+
+        Button:
+            text: root.field5
+            size_hint_x: 1
+            size_hint_y: None
+            height: self.texture_size[1]
+            on_release:
+                root.assign_faction(root.field5)
+            opacity: 0 if root.field5 == "" else 1
+
+
+
+
+
+
+

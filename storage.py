@@ -1,4 +1,5 @@
 # same file for players and games as separate entries
+from typing import List
 
 # get players from here and send to Table by caller
 
@@ -6,12 +7,40 @@ from kivy.app import App
 import json
 from pathlib import Path
 import os
-from elements import Player
+from elements import Player, Reinforcements, Faction, Campaign
+
 
 class Data:
     def __init__(self):
         #Default players
         self.players = [Player(f"Player {_+1}") for _ in range(4)]
+
+        # Default factions
+        self.factions = [
+            # Core box
+            Faction("Rebel", "Core"),
+            Faction("Empire","Core",True),
+
+            # Clone Wars box
+            Faction("Republic", "Clone Wars"),
+            Faction("Separatists","Clone Wars",True),
+
+            # Mandalorian Expansion
+            Faction("Mandalorian","Mandalorian"),
+        ]
+
+        # Default reinforcements
+        self.reinforcements = [
+            # Rebel & Empire Reinforcements Expansion
+            Reinforcements(self.factions[0].name), Reinforcements(self.factions[1].name)]
+
+        # Default neutral decks
+        self.neutral = [
+            self.factions[0].box,
+            self.factions[2].box,
+        ]
+
+        self.campaigns: List[Campaign] = []
 
     @staticmethod
     def file_path() -> str:
@@ -78,6 +107,15 @@ class Data:
 
             # Rename player
             player.rename(name)
+
+    def new_campaign(self, players: List[Player]):
+
+        campaign = Campaign(players)
+
+        self.campaigns.insert(0, campaign)
+
+        #call saving method
+
 
     def json_players(self) -> dict[str, str]:
         """

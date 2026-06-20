@@ -1,0 +1,66 @@
+<CampaignsListWindow>
+    name: "campaigns_list"
+#    on_enter:
+#        root.list_campaigns()  # load campaigns
+
+    TempBackground:
+
+    FloatLayout:
+
+        TempButton:
+            text: "New Campaign >> "
+            pos_hint: {"center_y":.95, "center_x":0.5}
+            on_release:
+                app.root.current = "new_campaign"
+
+        ScrollView:
+            do_scroll_x: False
+            size_hint: (1, 0.9)
+            pos_hint: {"center_x": 0.5, "center_y": 0.4}
+            canvas.before:
+                Color:
+                    rgba: (0.33, 1, 0.73, 0.812)
+                Line:
+                    rounded_rectangle:
+                        self.x, self.y, self.width, self.height, 10
+
+
+            FloatLayout:
+
+                Label:
+                    size_hint: (1, 0.3)
+                    pos_hint: {"center_y":.86, "center_x":0.5}
+                    color: "red"
+
+                    text: "This will be displaying campaigns list \nwith ButtonBehavior, BoxLayout, and for loop"
+
+                TempButton:
+                    text: "Campaign 1 Details >> "
+                    pos_hint: {"center_y":.77, "center_x":0.5}
+                    on_release:
+                        app.root.current = "campaign_details"
+
+                TempButton:
+                    text: "Campaign 2 Details >> "
+                    pos_hint: {"center_y":.67, "center_x":0.5}
+                    on_release:
+                        app.root.current = "campaign_details"
+
+                TempButton:
+                    text: "etc >> "
+                    pos_hint: {"center_y":.57, "center_x":0.5}
+                    on_release:
+                        app.root.current = "list_screen"
+
+                Label:
+                    size_hint: (1, 0.3)
+                    pos_hint: {"center_y":.42, "center_x":0.5}
+                    color: "red"
+
+                    text: "Add delete buttons"
+
+        # Previous window button
+        Back:
+            text: "<< welcome window"
+            on_release:
+                app.root.current = "welcome"

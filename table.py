@@ -1,15 +1,20 @@
-from elements import neutral
+#from elements import neutral
 from random import randrange, shuffle
+from kivy.app import App
+from typing import List
+
 
 class Table:
     """
     Game table class.
     """
-    def __init__(self, names):
+    app = App.get_running_app()
+
+    def __init__(self, names: List):
         self.players = 0
         self.names = names # List of players (Player objects)
         self.factions_pool = []
-        self.neut = neutral
+        self.neut: List = self.app.neut_deck
 
     def nbr_of_players(self, val):
         """
@@ -17,14 +22,16 @@ class Table:
         """
         self.players = val
 
-    def set_game(self, fcts):
+    def set_game(self, fcts: List):
         """
         Set game.
         Returns:
             bool: True if the selection is complete, False otherwise.
         """
         # Get copy of factions to draw from
-        self.factions_pool = list(fcts)
+        self.factions_pool = list(fcts) ## notes bellow
+        #### with editable cards factions should be passed from app at init or as app.get_running_app()
+        ## This way factions are not only this class variable and it's same class instance everywhere
 
         # Bail out early if the selection is incomplete.
         if len(self.factions_pool) < self.players:

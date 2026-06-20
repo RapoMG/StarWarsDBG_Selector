@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import List, Optional
+from functools import partial
 
 from kivy.app import App
 from kivy.config import Config
@@ -13,8 +14,12 @@ from kivy.uix.popup import Popup
 from kivy.utils import platform
 
 from kivy.core.text import LabelBase
+from kivy.uix.textinput import TextInput
 
 BASE_DIR = Path(__file__).resolve().parent
+
+from campaign import CampaignsListWindow, CampaignDetailsWindow, NewCampaignWindow
+from cards_tab import ListScreen, CardRow
 
 from kivy.core.window import Window
 
@@ -55,14 +60,6 @@ LabelBase.register(name="Holo_Ex",
 class WelcomeWindow(Screen):
     """
     Main window.
-    """
-    pass
-
-## Campaign Screens ##
-
-class CampaignWindow(Screen):
-    """
-    Campaign selection screen.
     """
     pass
 
@@ -208,12 +205,12 @@ class FactionsWindow(Screen):
         # Prepare selected factions
         app = App.get_running_app()
         selected =[]
-        src = App.get_running_app()
-        if self.chk[1]: selected.append(src.fc[0])
-        if self.chk[2]: selected.append(src.fc[1])
-        if self.chk[4]: selected.append(src.fc[2])
-        if self.chk[5]: selected.append(src.fc[3])
-        if self.chk[6]: selected.append(src.fc[4])
+
+        if self.chk[1]: selected.append(app.fc[0])
+        if self.chk[2]: selected.append(app.fc[1])
+        if self.chk[4]: selected.append(app.fc[2])
+        if self.chk[5]: selected.append(app.fc[3])
+        if self.chk[6]: selected.append(app.fc[4])
 
         # Setting table
         if not app.table.set_game(selected):
@@ -322,6 +319,7 @@ class DrawResultsWindow(Screen):
         self.ids.n_line.text = ""
         self.ids.n_line.opacity = 1  # Neutral deck visible
 
+
 ## Utilities ##
 class InfoPopup(Popup):
     """
@@ -337,6 +335,69 @@ class InfoPopup(Popup):
 
     # Property for information about the app
     about = StringProperty("")
+
+    def on_open(self):
+
+        app = App.get_running_app()
+
+        reb_cards = app.fc[0]
+        imp_cards = app.fc[1]
+
+        reb_rein = app.rein[0]
+        imp_rein = app.rein[1]
+
+
+        self.populate_cards_list(
+            self.ids.reb_layout,
+            reb_cards
+        )
+
+        self.populate_cards_list(
+            self.ids.reb_re_layout,
+            reb_rein
+        )
+
+        self.populate_cards_list(
+            self.ids.imp_layout,
+            imp_cards
+        )
+
+        self.populate_cards_list(
+            self.ids.imp_re_layout,
+            imp_rein
+        )
+
+    def populate_cards_list(self, container, deck):
+        """
+        Populate a container with TextInput widgets for each card in the list.
+
+        :param container: The container to populate
+        :param deck: List of cards to populate the container with
+        """
+
+        container.clear_widgets()
+
+        for i, card_name in enumerate(deck.cards):
+            ti = TextInput(
+                text=card_name,
+                multiline=False,
+                size_hint_y=None,
+                height=40,
+            )
+
+            ti.bind(text=partial(self.update_card_name, deck, i))
+            container.add_widget(ti)
+
+    def update_card_name(self, deck, index, widget, text):
+        """
+        Update the name of a card in the list.
+
+        :param deck: Class Faction or Reinforcements
+        :param index: Index of the card to update
+        :param widget: TextInput widget
+        :param text: New text for the card
+        """
+        deck.rename_cards(index, text)
 
     def update(self):
         """
@@ -356,7 +417,8 @@ class InfoPopup(Popup):
         # Save changes to file
         app.data.save_file()
 
-    def link_to_github(self, ref):
+    @staticmethod
+    def link_to_github(ref):
         """
         Open the app's GitHub page with the project page in the default web browser.
         """
@@ -371,20 +433,26 @@ class WindowManager(ScreenManager):
 
 class SelectorApp(App):
     """ Main app """
+
     # Shared data accessible by all screens
     shared_players = StringProperty("Waiting for players...")
 
     table = None
     data = None
     fc = None  # factions
+    neut_deck = None  # neutral decks
+    rein = None  # reinforcements
     pl = None  # players
 
     # Should neutral deck be drawn
     neut = True
 
+    # Temporary variables
+    selected_cards = None
+
     def build(self):
         """ Build app """
-        from elements import factions
+        #from elements import factions
         from table import Table
         from storage import Data
 
@@ -395,7 +463,11 @@ class SelectorApp(App):
         # Initialize shared data before KV rules are evaluated.
         # faction_window.kv references app.fc during load, so it must exist here.
         self.pl = self.data.get_players()
-        self.fc = factions # call factions from elements.py
+        #self.fc = factions # call factions from elements.py
+        self.fc = self.data.factions
+        self.neut_deck = self.data.neutral
+        self.rein = self.data.reinforcements
+
         self.table = Table(self.pl)
 
         resource_add_path(str(BASE_DIR))
@@ -430,10 +502,15 @@ class SelectorApp(App):
             about = "Missing file"
 
         popup = InfoPopup(
+            # Pass players names
             player1_name=players[0].name,
             player2_name=players[1].name,
             player3_name=players[2].name,
             player4_name=players[3].name,
+            # Pass factions and reinforcements cards
+
+
+            # Pass about text
             about=about,
         )
         # Open popup with prepared values

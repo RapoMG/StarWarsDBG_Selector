@@ -1,10 +1,21 @@
 #:import NoTransition kivy.uix.screenmanager.NoTransition
 #:import Window kivy.core.window.Window
+
 #:include windows/settings_popup.kv
 #:include windows/welcome_window.kv
+
+#### Draw ####
 #:include windows/draw/players_window.kv
 #:include windows/draw/faction_window.kv
 #:include windows/draw/draw_result_window.kv
+
+#### Campaign ####
+#:include windows/campaign/campaigns_list.kv
+#:include windows/campaign/campaign_details.kv
+#:include windows/campaign/new_campaign.kv
+#:include list_screen.kv
+
+#:include windows/campaign/popup/select_faction_popup.kv
 
 
 ScreenManager:
@@ -14,6 +25,13 @@ ScreenManager:
     PlayersWindow:
     FactionsWindow:
     DrawResultsWindow:
+
+    CampaignsListWindow:
+    CampaignDetailsWindow:
+    NewCampaignWindow:
+
+
+    ListScreen:
 
 ### Definitions ###
 # Labels
@@ -81,6 +99,77 @@ ScreenManager:
 
     pos_hint :{'center_x':0.5, 'center_y':0.1}
     size_hint: .55, .16
+
+<TempBackground@Widget>
+    size: root.width, root.height
+    orientation: "horizontal"
+    spacing: 10
+
+    canvas:
+        Rectangle:
+            source:'temp/building.png'
+            size: root.width, root.height
+            pos: self.pos
+
+<TempButton@Button>
+    size_hint: (0.45,0.06)
+    pos_hint: {"center_y":.5, "center_x":0.5}
+
+    canvas.after:
+        Color:
+            rgba: (1,0,0,1) if self.state == 'down' else (0,0,1,1)
+        Line:
+            points:
+                (self.x, self.top,
+                self.x, self.y,
+                self.right, self.y,
+                self.right, self.top,
+                self.x, self.top,
+                )
+            width: 4
+
+<TempLabel@Label>
+#    size_hint: (0.45,0.06)
+#    pos_hint: {"center_y":.5, "center_x":0.5}
+    size_hint_x: 1
+    size_hint_y: None
+    height: self.texture_size[1]+1
+
+    canvas.before:
+        Color:
+            rgba: (0.33, 1, 0.73, 0.812)
+        Line:
+            rounded_rectangle:
+                self.x, self.y, self.width, self.height, 10
+
+<CardRow>:
+    size_hint_y: None
+    height: dp(40)
+
+    TextInput:
+        text: root.card.name
+        multiline: False
+        on_text: root.update(self.text)
+
+<CardInputRow@GridLayout>:
+    cols: 1
+    rows: 3
+    # change to GridLayout with columns assigned by faction cards len()
+#    id: reb_layout
+    # orientation: "vertical"
+    size_hint_y: None
+    height: self.minimum_height
+
+#    TextInput:
+#        font_size: min(Window.width, Window.height) * 0.045
+#        font_name: "Holo_Ex"
+#        halign: "center"
+#        multiline: False
+#
+#        foreground_color: (0.33, 1, 0.73, 0.812)
+#
+#        border_margin: (0,4,0,4)
+#        background_color: (0,0,0,0)
 
 <Player_name@TextInput>
     size_hint: (.655, 0.075)
