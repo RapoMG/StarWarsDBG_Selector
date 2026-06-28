@@ -294,7 +294,7 @@
 
             #Buttons
             TempButton:
-                id: battle_results
+                id: main_button
                 text: root.main_button_text #"Confirm" if root.editable else "Battle results"
                 pos_hint: {"center_x": 0.5, "center_y": 1}
                 size_hint: (0.6, 0.2)
@@ -317,6 +317,7 @@
         Back:
             text: "back. campaigns_list"
             on_release:
+                root.exit_cleanup()
                 app.root.current = "campaigns_list"
 
 

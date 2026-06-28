@@ -119,7 +119,6 @@ class Campaign:
 
         # VALIDATORS
         self.even_cards_nbr: bool = True
-        #ToDo: add even cards number validator to official rules and campaign_validators
 
         #add card names validators to classes!
     @staticmethod
@@ -200,14 +199,15 @@ class Campaign:
         #return True if added - removed == 0 else (added - removed)
         return added - removed
 
-    def campaign_valid(self) -> dict[str, tuple[str, int]] | None:
+    def campaign_valid(self) -> list[tuple[str,str,int]] :
         """
         Checks if the campaign decks have valid sizes.
         Returns the players’ names and the differences between the permitted size and the current size.
-        :return: **None** if decks are valid; otherwise,  Dictionary {"player name": ("starter"|"galaxy", difference)}
+        :return: **None** if decks are valid; otherwise, List [("faction name", "starter"|"galaxy", difference)]
         """
 
-        errors: dict[str, tuple[str, int]] = {}
+        #errors: dict[str, tuple[str, int]] = {}
+        errors: list[tuple[str,str,int]] = []
 
         for p in range(len(self.players)):
 
@@ -217,15 +217,15 @@ class Campaign:
             if starter_val == 0 and galaxy_val == 0:
                 continue
 
-            name = self.players[p].name
+            name = self.players[p].faction.name
 
             if starter_val != 0:
-                errors[name] = ("starter", starter_val)
+                errors.append((name, "Starter", starter_val))
 
             if galaxy_val != 0:
-                errors[name] = ("galaxy", galaxy_val)
+                errors.append((name, "Galaxy", galaxy_val))
 
-        return errors if len(errors) != 0 else None
+        return errors #if len(errors) != 0 else None
 
     def matching_factions(self) -> bool:
         """

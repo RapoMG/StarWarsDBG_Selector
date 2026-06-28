@@ -8,6 +8,7 @@ from kivy.uix.boxlayout import BoxLayout
 
 from kivy.uix.screenmanager import Screen
 from kivy.uix.popup import Popup
+from kivy.uix.label import Label
 
 from functools import partial
 from kivy.app import App
@@ -68,6 +69,10 @@ class StarterDeckRow(GridLayout):
 
     p2_card_name = StringProperty("")
     p2_card_nbr = StringProperty("")
+
+
+class ErrorsRow(GridLayout):
+    error = StringProperty("")
 
 
 def ordinal_numbers(game_number: int) -> str:
@@ -159,32 +164,7 @@ class CampaignDetailsWindow(Screen):
 
     editable = BooleanProperty(False)  # switch between view and edit Screen
 
-    #main_button_text = StringProperty()
-
-    #errors = {}
-    @property
-    def main_button_text(self):
-        """Text for the main button depending on the current screen mode (edit | errors | display)."""
-        # is in display mode
-        if not self.editable:
-           return "Resolve the Battle"
-        # edit mode but with errors
-        elif self.has_errors():
-            return "Show decks errors"
-        else:
-            return "Confirm Reinforcements"
-
-    @property
-    def main_button_color(self):
-        """The main button colors depending on the current screen mode (edit | errors | display)."""
-        # is in display mode
-        if not self.editable:
-           return "yellow"
-        # edit mode but with errors
-        elif self.has_errors():
-            return "red"
-        else:
-            return "green"
+    main_button_text = StringProperty("Resolve the Battle")
 
     def on_pre_enter(self, *args):
         app = App.get_running_app()
@@ -226,17 +206,21 @@ class CampaignDetailsWindow(Screen):
         self.resource(app) # move that to campaign creation stage
 
     def primary_action(self):
-        # TODo: called by button
-        #  ifs to other methods to correct action
+        """Defines action for Screen primary button depending on the current screen mode (edit | errors | display)."""
 
         # is in display mode
         if not self.editable:
             # switch to edit mode
             self.edit_mode(True)
+            print("primary action made it editable")
 
         # edit mode but with errors
         elif self.has_errors(): # assigns errors to dict and return bool
-            self.show_errors_popup() # calls popup list
+            #self.show_errors_popup() # calls popup list
+            print("primary action see it has errors")
+            popup = DeckErrorsPopup()
+
+            popup.open()
 
         # edit mode and no errors
         else:
@@ -249,33 +233,54 @@ class CampaignDetailsWindow(Screen):
             #ToDo: Create saving method
             #app.data.save_campaign()
 
+        self.update_main_button()
 
+    def update_main_button(self, *args):
+        """Text and color for the main button depending on the current screen mode (edit | errors | display)."""
+        #print("buton text outer")
+        # is in display mode
+        if not self.editable:
+            #print("display text")
+            self.main_button_text = "Resolve the Battle"
+            self.ids.main_button.color = "yellow"
 
+        # edit mode but with errors
+        elif self.has_errors():
+            #print("errors text")
+            self.main_button_text = "Show decks errors"
+            self.ids.main_button.color = "red"
+        else:
+            #print("confirm text")
+            self.main_button_text = "Confirm Reinforcements"
+            self.ids.main_button.color = "green"
 
     def edit_mode(self,edit: bool = False):
 
-            disabled = not edit
+        disabled = not edit
 
-            # change state to editable mode
-            self.editable = edit
+        # change state to editable mode
+        self.editable = edit
 
-            # Editions area
-            self.ids.starter_cards_area.editable = edit
-            self.ids.removed_cards_area.editable = edit
-            self.ids.added_cards_area.editable = edit
-            self.ids.removed_bases_area.editable = edit
+        # Editions area
+        self.ids.starter_cards_area.editable = edit
+        self.ids.removed_cards_area.editable = edit
+        self.ids.added_cards_area.editable = edit
+        self.ids.removed_bases_area.editable = edit
 
-            # Force fields
-            self.ids.p1_resource.disabled = disabled
+        # Force fields
+        self.ids.p1_resource.disabled = disabled
 
-            self.ids.force_2.disabled = disabled
+        self.ids.force_2.disabled = disabled
 
-            # Force buttons
-            self.ids.force_3.disabled = disabled
-            self.ids.force_n.disabled = disabled
-            self.ids.force_5.disabled = disabled
-            self.ids.force_6.disabled = disabled
-            self.ids.p2_resource.disabled = disabled
+        # Force buttons
+        self.ids.force_3.disabled = disabled
+        self.ids.force_n.disabled = disabled
+        self.ids.force_5.disabled = disabled
+        self.ids.force_6.disabled = disabled
+        self.ids.p2_resource.disabled = disabled
+
+        # ToDo: Update here?
+        #self.update_main_button()
 
 
         # ToDo:
@@ -285,7 +290,6 @@ class CampaignDetailsWindow(Screen):
         #       Add +1 to battle number
         #       After confirming 5th battle counter displays "campaign finished" and disables all buttons
         #  clean after leaving to camp selection
-
 
     def resource(self, app):
         """
@@ -313,6 +317,7 @@ class CampaignDetailsWindow(Screen):
 
             #popup.bind(on_dismiss=lambda *_: self.refresh_starter())
             popup.bind(on_dismiss=partial(self.refresh_starter, action))
+            popup.bind(on_dismiss=self.update_main_button)
 
             popup.open()
 
@@ -333,6 +338,10 @@ class CampaignDetailsWindow(Screen):
             popup.ids.faction2_card.hint_text = hints.get(action, "Card name")
 
             popup.bind(on_dismiss=partial(self.update_card_list, action))
+
+            # ToDo: Update button here?
+            popup.bind(on_dismiss=self.update_main_button)
+
             #popup.bind(text=partial(self.update_card_list,action))
             #popup.bind(text=partial(self.update_card_list,action, deck, i))
 
@@ -448,7 +457,14 @@ class CampaignDetailsWindow(Screen):
         :return: True if campaign decks are valid, False otherwise
         """
         errors = self.campaign.campaign_valid()
-        return True if errors is None else False
+        return bool(errors)
+
+    def exit_cleanup(self):
+        """Setups properties to default values"""
+        # Todo: clean this screen,
+        #  made temporary campaign variable (copy) to work on
+        #  save: overwrite original
+
 
 class NewCampaignWindow(Screen):
     """
@@ -643,6 +659,23 @@ class DeckErrorsPopup(Popup):
     def on_open(self):
         app = App.get_running_app()
         errors = app.selected_campaign.campaign_valid()
+        print(f"in popup:{errors}")
+
+        errors_grid = self.ids.errors_grid
+
+        errors_grid.clear_widgets()
+
+        for faction, deck, diff in errors:
+
+            direction = "has too many" if diff > 0 else "doesn't have enough"
+            line = Label(
+                text=f"{faction} faction {direction} {deck} cards.",
+                color="red",
+                size_hint_y=None,
+                height=40,
+            )
+
+            errors_grid.add_widget(line)
 
 # ToDo: Starter Popup
 #    Confirm button is available if campaign validators ar ok (make working validators)
