@@ -11,7 +11,7 @@ class Table:
     app = App.get_running_app()
 
     def __init__(self, names: List):
-        self.players = 0
+        self.players: int = 0
         self.names = names # List of players (Player objects)
         self.factions_pool = []
         self.neut: List = self.app.neut_deck
