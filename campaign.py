@@ -323,7 +323,14 @@ class CampaignDetailsWindow(Screen):
             popup.faction1 = self.campaign.players[0].faction.name
             popup.faction2 = self.campaign.players[1].faction.name
 
-            #popup.ids.faction1_card.hint_text = "pingwin"
+            hints = {
+                "removed cards": "Name card to remove",
+                "added cards": "Name card to add",
+                "removed bases": "Name base to remove",
+            }
+
+            popup.ids.faction1_card.hint_text = hints.get(action, "Card name")
+            popup.ids.faction2_card.hint_text = hints.get(action, "Card name")
 
             popup.bind(on_dismiss=partial(self.update_card_list, action))
             #popup.bind(text=partial(self.update_card_list,action))
@@ -401,8 +408,6 @@ class CampaignDetailsWindow(Screen):
 
         self.populate_card_rows(container, p1_cards, p2_cards)
 
-        popup.ids.faction1_card.hint_text = hint
-        popup.ids.faction2_card.hint_text = hint
 
     @staticmethod
     def add_card_copy(cards: dict[str, int], card_name: str):
