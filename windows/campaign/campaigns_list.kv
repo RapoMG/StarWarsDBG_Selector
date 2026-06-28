@@ -1,7 +1,7 @@
 <CampaignsListWindow>
     name: "campaigns_list"
-#    on_enter:
-#        root.list_campaigns()  # load campaigns
+#    on_pre_enter:
+#        root.on_pre_enter()  # load campaigns
 
     TempBackground:
 
@@ -14,53 +14,83 @@
                 app.root.current = "new_campaign"
 
         ScrollView:
-            do_scroll_x: False
+            do_scroll_x: True
             size_hint: (1, 0.9)
             pos_hint: {"center_x": 0.5, "center_y": 0.4}
-            canvas.before:
-                Color:
-                    rgba: (0.33, 1, 0.73, 0.812)
-                Line:
-                    rounded_rectangle:
-                        self.x, self.y, self.width, self.height, 10
+#            canvas.before:
+#                Color:
+#                    rgba: (0.33, 1, 0.73, 0.812)
+#                Line:
+#                    rounded_rectangle:
+#                        self.x, self.y, self.width, self.height, 10
 
+            GridLayout:
+                id: campaigns
+                cols: 1
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: dp(20)
+                padding: dp(20)
 
-            FloatLayout:
-
-                Label:
-                    size_hint: (1, 0.3)
-                    pos_hint: {"center_y":.86, "center_x":0.5}
-                    color: "red"
-
-                    text: "This will be displaying campaigns list \nwith ButtonBehavior, BoxLayout, and for loop"
-
-                TempButton:
-                    text: "Campaign 1 Details >> "
-                    pos_hint: {"center_y":.77, "center_x":0.5}
-                    on_release:
-                        app.root.current = "campaign_details"
-
-                TempButton:
-                    text: "Campaign 2 Details >> "
-                    pos_hint: {"center_y":.67, "center_x":0.5}
-                    on_release:
-                        app.root.current = "campaign_details"
-
-                TempButton:
-                    text: "etc >> "
-                    pos_hint: {"center_y":.57, "center_x":0.5}
-                    on_release:
-                        app.root.current = "list_screen"
-
-                Label:
-                    size_hint: (1, 0.3)
-                    pos_hint: {"center_y":.42, "center_x":0.5}
-                    color: "red"
-
-                    text: "Add delete buttons"
 
         # Previous window button
         Back:
             text: "<< welcome window"
             on_release:
                 app.root.current = "welcome"
+
+
+<CampaignButton>
+    size_hint_y: None
+    height: dp(120)
+
+    canvas.before:
+        Color:
+            rgba: .2, .2, .2, 1
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+
+    Label:
+        text: f"{root.game} battle"
+        font_size: "22sp"
+        pos_hint: {"x": 0.05, "top": 1}
+
+    Label:
+        text: root.p1_name
+        font_size: "22sp"
+        size_hint: None, None
+        size: self.texture_size
+        pos_hint: {"right": 0.6, "top": 0.9}
+
+    Label:
+        text: root.p1_faction
+        font_size: "30sp"
+        size_hint: None, None
+        size: self.texture_size
+        pos_hint: {"X": 1, "top": 1}
+
+    Label:
+        text: root.p1_reinforcements
+        font_size: "16sp"
+        size_hint: None, None
+        size: self.texture_size
+        pos_hint: {"right": 1, "top": 1}
+
+
+    Label:
+        text: root.p2_name
+        font_size: "22sp"
+        pos_hint: {"x": 0.05, "top": 0.5}
+
+    Label:
+        text: root.p2_faction
+        font_size: "30sp"
+        size_hint: None, None
+        size: self.texture_size
+        pos_hint: {"X": 0, "y": 0}
+
+    Label:
+        text: root.p2_reinforcements
+        font_size: "16sp"
+        pos_hint: {"right": 0, "y": 1}

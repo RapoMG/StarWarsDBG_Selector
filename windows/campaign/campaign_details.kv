@@ -1,0 +1,413 @@
+<CampaignDetailsWindow>
+    name: "campaign_details"
+
+    TempBackground:
+
+    FloatLayout: # window main container
+
+        BoxLayout: # details container
+            orientation: "vertical"
+            size_hint: (1, 0.85)
+            pos_hint: {"center_x": 0.5, "center_y": 0.572}
+            canvas.before:
+                Color:
+                    rgba: (0.33, 1, 0.73, 0.812)
+                Line:
+                    rounded_rectangle:
+                        self.x, self.y, self.width, self.height, 10
+
+            TempLabel:
+                color: "black"
+                text: f"[b]{root.game_number}[/b] game setup"
+                pos_hint: {"center_y":.9, "center_x":0.5}
+                markup: True
+
+            # Player names and factions
+            GridLayout: # player faction container
+                rows: 2
+                cols: 2
+                size_hint: (1, 0.2)
+                size_hint_y: None # allows dynamic height and correct scrolling
+                height: self.minimum_height
+                #orientation: "tb-lr" # top-bottom, left-right/ Use here to display cards vertically (better readability)
+
+                TempLabel:
+                    id: faction1
+                    color: "black"
+                    text: "Faction 1"
+
+                TempLabel:
+                    id: faction2
+                    text: "Faction 2"
+                    color: "black"
+
+                TempLabel:
+                    id: player1
+                    color: "black"
+                    text: "player1"
+                    bold: True
+
+                TempLabel:
+                    id: player2
+                    color: "black"
+                    text: "player2"
+                    bold: True
+
+            TempLabel:
+                color: "black"
+                text: "Reinforcements"
+                pos_hint: {"center_y":.9, "center_x":0.5}
+                markup: True
+
+            # reinforcements factions
+            GridLayout:
+                rows: 1
+                cols: 2
+                size_hint: (1, 0.2)
+                size_hint_y: None # allows dynamic height and correct scrolling
+                height: self.minimum_height
+
+                TempLabel: # expansion faction hidden if same as default faction (for both players)
+                    id: rein1
+                    color: "black"
+                    text: "Expansion_Faction 1"
+
+                TempLabel: # expansion faction hidden if same as default faction (for both players)
+                    id: rein2
+                    color: "black"
+                    text: "Expansion_Faction 2"
+
+            # Warning about extraordinary alliance
+            TempLabel:
+                id: rules_warning
+                color: "red"
+                text: "You won’t find any mention of this"
+                valign: "center"
+                opacity: 0
+
+            TempLabel:
+                id: rules_warning2
+                color: "red"
+                text: "extraordinary alliance in the official archives."
+                valign: "center"
+                opacity: 0
+
+#            # Starter cards and removed/added cards
+#            TempLabel: # Stater cards header
+#                text: "Starter cards"
+#                color: "violet"
+#                size_hint_x: 1
+#                size_hint_y: None
+#                height: self.texture_size[1]
+
+            # Starter cards header with columns
+            GridLayout:
+                rows: 1
+                cols: 4
+                size_hint: (1, 0.08)
+
+                # header
+                TempLabel:
+                    text: "Card"
+                TempLabel:
+                    text: "qty"
+                TempLabel:
+                    text: "card"
+                TempLabel:
+                    text: "qty"
+
+            # Cards container with scrollview to allow dynamic number of cards
+            ScrollView:
+                do_scroll_x: False
+                do_scroll_y: True
+
+
+
+                # All cards container
+                GridLayout:
+                    cols: 1
+                    rows: 4
+                    size_hint_y: None # allows dynamic height and correct scrolling
+                    height: self.minimum_height
+
+                    # Starter cards container
+                    EditableArea:
+                        id: starter_cards_area
+                        action: "starter cards"
+                        owner: root
+#                        size_hint_y: None
+#                        cols: 1
+                        rows:2
+#                        height: self.minimum_height
+#                        on_release:
+#                            root.for_butt(self)
+                        canvas.after:
+                            Color:
+                                rgba: (0, 0,39, 1, 0.812) if self.editable else (0, 0, 0, 0)
+                            Line:
+                                rounded_rectangle:
+                                    self.x, self.y, self.width, self.height, 10
+                                width: 4
+
+                        # Starter cards and removed/added cards
+                        TempLabel: # Stater cards header
+                            text: "Starter cards"
+                            color: "violet"
+                            size_hint_x: 1
+                            size_hint_y: None
+                            height: self.texture_size[1]
+
+                        # Starter cards rows
+                        GridLayout:
+                            id: starter_cards
+                            cols: 1 # rows are dynamic with length of starter cards list
+                            size_hint_y: None # allows dynamic height and correct scrolling
+                            height: self.minimum_height
+
+                    # Removed cards container
+                    EditableArea:
+                        id: removed_cards_area
+                        owner: root
+                        action: "removed cards"
+#                        size_hint_y: None
+#                        cols: 1
+#                        rows:2
+#                        height: self.minimum_height
+#                        on_release:
+#                            root.for_butt(self)
+                        canvas.after:
+                            Color:
+                                rgba: (0.33, 1, 0.73, 0.812) if self.editable else (0, 0, 0, 0)
+                            Line:
+                                rounded_rectangle:
+                                    self.x, self.y, self.width, self.height, 10
+                                width: 4
+
+                        TempLabel: # Removed cards header
+                            text: "Galaxy deck removed cards"
+                            color: "violet"
+                            size_hint_x: 1
+                            size_hint_y: None
+                            height: self.texture_size[1]
+
+                        # Galaxy deck removed cards
+                        GridLayout:
+                            id: removed_cards
+                            cols: 1 # rows are dynamic with length of starter cards list
+                            size_hint_y: None # allows dynamic height and correct scrolling
+                            height: self.minimum_height
+
+                    # added cards container
+                    EditableArea:
+                        id: added_cards_area
+                        owner: root
+                        action: "added cards"
+#                        size_hint_y: None
+#                        cols: 1
+#                        rows:2
+#                        height: self.minimum_height
+#                        on_release:
+#                            root.for_butt(self)
+                        canvas.after:
+                            Color:
+                                rgba: (0.33, 0.5, 0.5, 0.812) if self.editable else (0, 0, 0, 0)
+                            Line:
+                                rounded_rectangle:
+                                    self.x, self.y, self.width, self.height, 10
+                                width: 4
+
+                        TempLabel: # Added cards header
+                            text: "Added cards"
+                            color: "violet"
+                            size_hint_x: 1
+                            size_hint_y: None
+                            height: self.texture_size[1]
+
+                        # Galaxy deck removed cards
+                        GridLayout:
+                            id: added_cards
+                            cols: 1 # rows are dynamic with length of starter cards list
+                            size_hint_y: None # allows dynamic height and correct scrolling
+                            height: self.minimum_height
+
+                    # Removed bases container
+                    EditableArea:
+                        id: removed_bases_area
+                        owner: root
+                        action: "removed bases"
+#                        size_hint_y: None
+#                        cols: 1
+#                        rows:2
+#                        height: self.minimum_height
+
+                        canvas.after:
+                            Color:
+                                rgba: (1, 1, 0, 0.812) if self.editable else (0, 0, 0, 0)
+                            Line:
+                                rounded_rectangle:
+                                    self.x, self.y, self.width, self.height, 10
+                                width: 4
+
+                        TempLabel: # Removed bases header
+                            text: "Removed Bases"
+                            color: "violet"
+                            size_hint_x: 1
+                            size_hint_y: None
+                            height: 0.2
+
+                        # Removed Bases
+                        GridLayout:
+                            id: removed_bases
+                            cols: 1 # rows are dynamic with length of starter cards list
+                            size_hint_y: None # allows dynamic height and correct scrolling
+                            height: self.minimum_height
+
+
+            # Force tracker
+            GridLayout:
+                id: force_tracker
+                rows: 1
+                cols: 7
+                size_hint: (0.8, 0.3)
+                pos_hint: {"center_x": 0.5}
+                canvas.after:
+                    Color:
+                        rgba: (1, 1, 0, 0.812)
+                    Line:
+                        rounded_rectangle:
+                            self.x, self.y, self.width, self.height, 10
+
+                ForceField:
+                    id: p1_resource
+                ForceField:
+                    id: force_2
+                ForceField:
+                    id: force_3
+                ForceField:
+                    id: force_n
+                ForceField:
+                    id: force_5
+                ForceField:
+                    id: force_6
+                ForceField:
+                    id: p2_resource
+
+            #Buttons
+            TempButton:
+                id: battle_results
+                text: root.main_button_text #"Confirm" if root.editable else "Battle results"
+                pos_hint: {"center_x": 0.5, "center_y": 1}
+                size_hint: (0.6, 0.2)
+                # add colors and border here
+                on_release:
+                    #root.edit_mode(0) if root.editable else root.edit_mode(1)  # same window, but with visible controls?
+                    root.primary_action()
+
+                # edit allows change to previous battle limit
+                # this may require dict of campaign details
+
+#            TempButton:
+#                text: "Next battle >>\n (edit campaign +1 battle counter)"
+#                pos_hint: {"center_x": 0.5, "center_y": 1}
+#                size_hint: (0.6, 0.2)
+#                on_release: root.edit_campaign()
+
+
+                # Previous window button
+        Back:
+            text: "back. campaigns_list"
+            on_release:
+                app.root.current = "campaigns_list"
+
+
+##### Definitions of dynamic rows for starter cards, removed cards, and added cards ###
+<StarterDeckRow>
+    size_hint_y: None
+    height: self.minimum_height
+    cols: 4
+    rows: 1
+#    pos_hint: {"top": 1}
+#    orientation: "lr-tb"
+    canvas.before:
+        Color:
+            rgba: (0.0, 1, 0, 0.812)
+        Line:
+            rounded_rectangle:
+                self.x, self.y, self.width, self.height, 10
+
+    Label:
+        text: root.p1_card_name
+        #size: self.texture_size
+        size_hint_y: None # allows dynamic height and correct scrolling
+        height: self.texture_size[1]
+        size_hint_x: 1
+#        pos_hint: {"top": 1}
+#        orientation: "lr-tb"
+
+    Label:
+        text: root.p1_card_nbr
+        #size: self.texture_size
+        size_hint_y: None
+        height: self.texture_size[1]
+        size_hint_x: 0.35
+        width: dp(60)
+#        pos_hint: {"top": 1}
+#        orientation: "lr-tb"
+        canvas.before:
+            Color:
+                rgba: (0.5, 0, 1, 0.812)
+            Line:
+                rounded_rectangle:
+                    self.x, self.y, self.width, self.height, 10
+
+    Label:
+        text: root.p2_card_name
+        #size: self.texture_size
+        size_hint_x:1
+        size_hint_y: None
+        height: self.texture_size[1]
+        size_hint_x: 1
+
+
+    Label:
+        text: root.p2_card_nbr
+        #size: self.texture_size
+        size_hint_y: None
+        height: self.texture_size[1]
+        size_hint_x: 0.25
+
+<ForceField@ToggleButton>
+    size_hint: (0.1, 0.8)
+    pos_hint: {"center_y": 0.5}
+    background_normal: ""
+    background_down: ""
+    background_color: (0, 1, 1, 0)
+
+    disabled: True
+
+    group: "force_field"
+    canvas.after:
+        Color:
+            rgba:(0,0,0,1) if self.state == "down" else (0,0,0,0)
+        Rectangle:
+            source: "temp/marker.png" if self.state == "down" else ""
+            size: dp(48), dp(48)
+            pos:
+                self.center_x - self.width * 0.2, \
+                self.center_y - dp(12)
+    on_press:
+        if self.state == "normal": self.state = "down"
+
+<EditableArea>
+    owner: root
+    action: ""
+    size_hint_y: None
+    cols: 1
+    rows:2
+#    canvas.after:
+##        Color:
+##            rgba: (0, 0,39, 1, 0.812) if self.editable else (0, 0, 0, 0)
+#        Line:
+#            rounded_rectangle:
+#                self.x, self.y, self.width, self.height, 10
+#            width: 4

@@ -1,0 +1,107 @@
+<StarterCardsPopup>
+    title_size: 0  # no title line
+    separator_height:0 # no separator line
+
+    auto_dismiss: False # auto_dismiss set to True to allow user to dismiss popup
+    size_hint: (0.9, 0.9)
+
+    background: 'images/backgrounds/panel.png'
+
+    FloatLayout:
+
+        TabbedPanel:
+            do_default_tab: False
+            pos_hint: {"center_y":.56, "center_x":0.5}
+            size_hint: (0.99, 0.9)
+            tab_pos: 'top_mid'
+            background_image: 'images/backgrounds/fog.png'
+
+            PopPanel:
+                text: root.faction1
+
+                ScrollView:
+
+                    GridLayout:
+                        id: player1_grid
+                        cols: 1
+                        size_hint_y: None
+                        height: self.minimum_height
+                        spacing: dp(4)
+
+            PopPanel:
+                text: root.faction2
+
+                ScrollView:
+
+                    GridLayout:
+                        id: player2_grid
+                        cols: 1
+                        size_hint_y: None
+                        height: self.minimum_height
+                        spacing: dp(4)
+
+
+        Button:
+            text: 'Return'
+            color: (0.33, 1, 0.73, 0.812)
+            font_name: "Holo"
+            font_size: min(Window.width, Window.height) * 0.07
+
+            size_hint: (0.5, 0.10)
+            pos_hint :{'center_x':0.5, 'center_y':0.048}
+            background_normal: 'images/nav_buttons/tab_fog_med.png'
+            background_down: 'images/nav_buttons/tab_fog_dark.png'
+
+
+            canvas.after:
+                # Normal
+                Color:
+                    rgba: (0.33, 1, 0.73, 0.812) if self.state == 'normal' else (0,0,0,0)
+                Line:
+                    points:
+                        (self.x, self.top,
+                        self.x, self.y,
+                        self.right, self.y,
+                        self.right, self.top)
+                    width: 1
+
+                # Down
+                Color:
+                    rgba: (0.33, 1, 0.73, 0.812) if self.state == 'down' else (0,0,0,0)
+                Line:
+                    points:
+                        (self.x, self.top,
+                        self.x, self.y,
+                        self.right, self.y,
+                        self.right, self.top,
+                        )
+                    width: 4
+
+            on_release:
+
+                root.dismiss()
+
+<StarterCardsRow>
+    size_hint_y: None
+    height: dp(40)
+    spacing: dp(10)
+
+    Label:
+        text: root.card_name
+
+    Button:
+        text: "-"
+        size_hint_x: None
+        width: dp(40)
+        on_release: root.decrease()
+
+    Label:
+        text: str(root.value)
+        size_hint_x: None
+        width: dp(40)
+
+    Button:
+        text: "+"
+        size_hint_x: None
+        width: dp(40)
+        on_release: root.increase()
