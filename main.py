@@ -388,7 +388,8 @@ class InfoPopup(Popup):
             ti.bind(text=partial(self.update_card_name, deck, i))
             container.add_widget(ti)
 
-    def update_card_name(self, deck, index, widget, text):
+    @staticmethod
+    def update_card_name( deck, index, widget, text):
         """
         Update the name of a card in the list.
 
@@ -397,7 +398,7 @@ class InfoPopup(Popup):
         :param widget: TextInput widget
         :param text: New text for the card
         """
-        deck.rename_cards(index, text)
+        deck.rename_card(index, text)
 
     def update(self):
         """
@@ -436,6 +437,7 @@ class SelectorApp(App):
 
     # Shared data accessible by all screens
     shared_players = StringProperty("Waiting for players...")
+    selected_campaign = None
 
     table = None
     data = None
