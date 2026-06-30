@@ -299,3 +299,24 @@ class Campaign:
             "p2_removed_bases":self.p2_removed_bases,
 
         }
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]):
+        campaign = cls(
+            players=[Player.from_dict(player) for player in data["players"]],
+            game=data["game"]
+        )
+        campaign.p1_start = data["p1_start"]
+        campaign.p2_start = data["p2_start"]
+
+        campaign.p1_removed_cards = data["p1_removed_cards"]
+        campaign.p2_removed_cards=data["p2_removed_cards"]
+
+        campaign.p1_added_cards=data["p1_added_cards"]
+        campaign.p2_added_cards=data["p2_added_cards"]
+
+        campaign.p1_removed_bases=data["p1_removed_bases"]
+        campaign.p2_removed_bases=data["p2_removed_bases"]
+
+        return campaign
+
+
