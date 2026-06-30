@@ -1,4 +1,4 @@
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Any
 
 
 class Faction:
@@ -36,6 +36,16 @@ class Faction:
         except IndexError:
             print(f"Index {index} is out of range. Max index: {len(self.cards) - 1}")
 
+    def to_dict(self) -> dict:
+        """Converts class instance to a dictionary."""
+        return {"name": self.name, "box": self.box, "starter": self.starter, "cards": self.cards}
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        """Creates Faction class instance from a dictionary."""
+        faction = cls(name=data["name"], box=data["box"], starter=data["starter"])
+        faction.cards = data["cards"]
+        return faction
 
 class Reinforcements:
     """
@@ -63,6 +73,16 @@ class Reinforcements:
         except IndexError:
             print(f"Index {index} is out of range. Max index: {len(self.cards) - 1}")
 
+    def to_dict(self) -> dict[str, Any]:
+        """Converts class instance to a dictionary."""
+        return {"faction_name": self.faction_name, "cards": self.cards}
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        """Creates Faction class instance from a dictionary."""
+        reinforcements = cls(data["faction_name"])
+        reinforcements.cards = data["cards"]
+        return reinforcements
 
 
 class Player:
@@ -99,14 +119,36 @@ class Player:
     def rename(self, name: str):
         self.name = name
 
+    def to_dict(self) -> dict[str, Any]:
+        """Converts class instance to a dictionary."""
+        return {
+            "name": self.name,
+            "first": self.first,
+            "faction": self.faction.to_dict(),
+            "reinforcements": self.reinforcements.to_dict(),
+        }
+    @classmethod
+    def from_dict(cls, data: dict):
+        """Creates Player class instance from a dictionary."""
+        player = cls(data["name"])
+        player.first = data["first"]
+
+        faction = Faction.from_dict(data["faction"])
+        player.add_faction(faction)
+
+        reinforcements = Reinforcements.from_dict(data["reinforcements"])
+        player.add_reinforcements(reinforcements)
+
+        return player
+
 class Campaign:
     def __init__(self, players: List[Player], game: int = 1):
         self.players: list[Player] = players
         self.game: int = game # number of games played in campaign
 
         # DECKS
-        self._p1_start = self._build_start_deck(self.players[0])
-        self._p2_start = self._build_start_deck(self.players[1])
+        self.p1_start = self._build_start_deck(self.players[0])
+        self.p2_start = self._build_start_deck(self.players[1])
 
         self.p1_removed_cards: Dict[str, int] = {}
         self.p2_removed_cards: Dict[str, int] = {}
@@ -117,7 +159,7 @@ class Campaign:
         self.p1_removed_bases: Dict[str, int] = {}
         self.p2_removed_bases: Dict[str, int] = {}
 
-        # VALIDATORS
+        # VALIDATOR Var
         self.even_cards_nbr: bool = True
 
         #add card names validators to classes!
@@ -133,7 +175,7 @@ class Campaign:
         used = player.faction.cards
         default = player.reinforcements.default_cards
 
-        # Card names validation
+        # Card names validation between decks
         for i, card_name in enumerate(player.reinforcements.cards):
             if card_name not in used:
                 used.append(card_name)
@@ -164,7 +206,7 @@ class Campaign:
         :return: Dictionary of card names and their quantities
         """
         if 0 < player_nbr <= len(self.players):
-            deck =  getattr(self, f"_p{player_nbr}_start")
+            deck =  getattr(self, f"p{player_nbr}_start")
             return {card: quantity for card, quantity in deck.items() if quantity > 0}
         else:
             raise IndexError("Player number is out of range.")
@@ -237,16 +279,23 @@ class Campaign:
 
         return True if player1_set and player2_set else False
 
- # if type(start_val) is int:
-            #     if start_val > 0:
-            #         return f"{self.players[p].name} has too many starter cards."
-            #     else:
-            #         return f"{self.players[p].name} doesn't have enough starter cards."
-            #
-            # # Galaxy deck validation
-            # galaxy_val = self.check_galaxy_nbr(p + 1)
-            # if type(galaxy_val) is int:
-            #     if galaxy_val > 0:
-            #         return f"{self.players[p].name} has too many cards in the Galaxy deck."
-            #     else:
-            #         return f"{self.players[p].name} doesn't have enough cards in the Galaxy deck."
+    def to_dict(self) -> dict[str, Any]:
+        """Converts class instance to a dictionary."""
+
+        return {
+            "players": [ player.to_dict() for player in self.players ],
+            "game": self.game,
+
+            "p1_start": self.p1_start,
+            "p2_start": self.p2_start,
+
+            "p1_removed_cards": self.p1_removed_cards,
+            "p2_removed_cards": self.p2_removed_cards,
+
+            "p1_added_cards": self.p1_added_cards,
+            "p2_added_cards": self.p2_added_cards,
+
+            "p1_removed_bases":self.p1_removed_bases,
+            "p2_removed_bases":self.p2_removed_bases,
+
+        }

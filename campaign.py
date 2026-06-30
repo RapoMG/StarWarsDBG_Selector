@@ -639,8 +639,8 @@ class StarterCardsPopup(Popup):
 
         # ToDO: add method to both decks access
 
-        self.populate(self.ids.player1_grid, campaign._p1_start)
-        self.populate(self.ids.player2_grid, campaign._p2_start)
+        self.populate(self.ids.player1_grid, campaign.p1_start)
+        self.populate(self.ids.player2_grid, campaign.p2_start)
 
     def populate(self, grid, data):
         grid.clear_widgets()
