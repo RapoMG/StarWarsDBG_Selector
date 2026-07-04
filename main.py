@@ -1,3 +1,4 @@
+from copy import deepcopy
 from pathlib import Path
 from typing import List, Optional
 from functools import partial
@@ -15,6 +16,8 @@ from kivy.utils import platform
 
 from kivy.core.text import LabelBase
 from kivy.uix.textinput import TextInput
+
+from elements import Campaign
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -438,13 +441,22 @@ class SelectorApp(App):
     # Shared data accessible by all screens
     shared_players = StringProperty("Waiting for players...")
     selected_campaign = None
+    working_campaign = None
 
     table = None
     data = None
-    fc = None  # factions
-    neut_deck = None  # neutral decks
-    rein = None  # reinforcements
+
+    # base lists
     pl = None  # players
+    fc = None  # factions
+    rein = None  # reinforcements
+
+    # working instances
+    pl_working = None  # players
+    fc_working = None  # factions
+    rein_working = None  # reinforcements
+
+    neut_deck = None  # neutral decks
 
     # Should neutral deck be drawn
     neut = True
@@ -465,7 +477,6 @@ class SelectorApp(App):
         # Initialize shared data before KV rules are evaluated.
         # faction_window.kv references app.fc during load, so it must exist here.
         self.pl = self.data.get_players()
-        #self.fc = factions # call factions from elements.py
         self.fc = self.data.factions
         self.neut_deck = self.data.neutral
         self.rein = self.data.reinforcements
@@ -489,6 +500,41 @@ class SelectorApp(App):
         if self.root is not None and self.root.canvas is not None:
             self.root.canvas.ask_update()
         Window.canvas.ask_update()
+
+    def prepare_working_campaign(self, campaign=None):
+        """
+        Prepare working campaign for editing or clean current if param is empty.
+        :param campaign: Campaign to work on or *None* to clean current campaign
+        """
+        self.selected_campaign = campaign
+        self.working_campaign = deepcopy(self.selected_campaign)
+
+    def prepare_working_elements(self):
+        """
+        Prepares working elements for editing.
+        pl_working - Players
+        fc_working - Factions
+        rein_working - Reinforcements
+        """
+
+        self.pl_working = deepcopy(self.pl)
+        self.fc_working = deepcopy(self.fc)
+        self.rein_working = deepcopy(self.rein)
+
+    def clear_working_elements(self):
+        """Removes all working instances"""
+
+        if self.pl_working is not None:
+            self.pl_working.clear()
+
+        if self.fc_working is not None:
+            self.fc_working.clear()
+
+        if self.rein_working is not None:
+            self.rein_working.clear()
+
+        self.selected_campaign = None
+        self.working_campaign = None
 
     def open_settings(self):
         """ Open settings and info popup """

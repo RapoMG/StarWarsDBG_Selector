@@ -1,7 +1,9 @@
+from copy import deepcopy
 from itertools import zip_longest
 
 from kivy.properties import StringProperty, NumericProperty, BooleanProperty, ObjectProperty
 from kivy.uix.behaviors import ButtonBehavior
+from kivy.uix.button import Button
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
@@ -12,10 +14,11 @@ from kivy.uix.label import Label
 
 from functools import partial
 from kivy.app import App
+from kivy.clock import Clock
+from kivy.metrics import dp
+
 
 from elements import Campaign, Player, Faction, Reinforcements
-#from table import Table
-
 
 # Functions and buttons
 class CampaignButton(ButtonBehavior, FloatLayout):
@@ -32,6 +35,7 @@ class CampaignButton(ButtonBehavior, FloatLayout):
     p2_faction = StringProperty("")
     p2_reinforcements = StringProperty("")
 
+
 class EditableArea(ButtonBehavior, GridLayout):
     editable = BooleanProperty(False)
     owner = ObjectProperty(None)
@@ -39,11 +43,10 @@ class EditableArea(ButtonBehavior, GridLayout):
 
     def on_release(self):
         if not self.editable:
-            print("behavior turned off")
             return
         if self.owner:
             self.owner.popup_selector(self.action, self)
-            #self.open_popup(self) #Or local function
+
 
 class StarterCardsRow(BoxLayout):
     card_name = StringProperty("")
@@ -62,7 +65,8 @@ class StarterCardsRow(BoxLayout):
 
 class StarterDeckRow(GridLayout):
     """
-    Properties for starter deck row
+    Properties for row displaying starter cards in order:
+    faction1 card, quantity, faction2 card, quantity
     """
     p1_card_name = StringProperty("")
     p1_card_nbr = StringProperty("")
@@ -88,42 +92,26 @@ def ordinal_numbers(game_number: int) -> str:
 # Campaign windows
 class CampaignsListWindow(Screen):
     """
-    Campaigns list
+    Screen displaying campaigns list as buttons.
+    Each button is linked to a campaign instance and opens CampaignDetailsWindow.
     """
-    ## Temporary tests code ##
-    test_player = Player("Maciejka")
 
-    test_player.add_faction(Faction("Rebelia"))
-    test_player.add_reinforcements(Reinforcements("Rebelianci"))
-
-    test_player2 = Player("Maciek")
-
-    test_player2.add_faction(Faction("Empire"))
-    test_player2.add_reinforcements(Reinforcements("Stormtroopers"))
-
-    test_campaign = Campaign(
-        [test_player, test_player2]
-    )
-
-    test_campaign2 = Campaign(
-        [test_player2, test_player]
-    )
-    ##########
-    campaigns = [test_campaign, test_campaign2]
+    campaigns = None
 
     def on_pre_enter(self):
 
-        #app = App.get_running_app()
+        app = App.get_running_app()
 
-        #campaigns = app.data.campaigns
-        campaigns = self.campaigns
+        self.campaigns = app.data.campaigns
+        # campaigns = self.campaigns
 
         button_grid = self.ids.campaigns
         button_grid.clear_widgets()
 
-        print(len(campaigns))
+        for campaign in self.campaigns:
+            # Create a container for the campaign button and the delete button
+            row = BoxLayout(size_hint_y=None, height=dp(120), spacing=10)
 
-        for campaign in campaigns:
             campaign_button = CampaignButton(
                 game=ordinal_numbers(campaign.game),
 
@@ -138,7 +126,24 @@ class CampaignsListWindow(Screen):
 
             campaign_button.bind(on_release=partial(self.campaign_selection, campaign))
 
-            button_grid.add_widget(campaign_button)
+            # Smaller delete button
+            delete_btn = Button(text="X", size_hint=(None, 1), width=dp(50), background_color=(1, 0, 0, 1))
+            delete_btn.bind(on_release=partial(self.confirm_delete, campaign))
+
+            row.add_widget(campaign_button)
+            row.add_widget(delete_btn)
+            button_grid.add_widget(row)
+
+    def confirm_delete(self, campaign, instance):
+        popup = DeleteCampaignPopup(campaign=campaign, on_confirm=self.delete_campaign)
+        popup.open()
+
+    def delete_campaign(self, campaign):
+        app = App.get_running_app()
+        if campaign in app.data.campaigns:
+            app.data.campaigns.remove(campaign)
+            app.data.save_file()
+            self.on_pre_enter()  # Refresh the list
 
     def campaign_selection(self, campaign, instance):
         """
@@ -147,11 +152,12 @@ class CampaignsListWindow(Screen):
         then switch to different screen, where it will be used.
         """
         app = App.get_running_app()
-        app.selected_campaign = campaign
+        # app.selected_campaign = campaign
+
+        #prepare working campaign
+        app.prepare_working_campaign(campaign)
 
         self.manager.current = "campaign_details"
-
-    # ToDO: delete campaign button
 
 
 class CampaignDetailsWindow(Screen):
@@ -168,7 +174,11 @@ class CampaignDetailsWindow(Screen):
 
     def on_pre_enter(self, *args):
         app = App.get_running_app()
-        self.campaign = app.selected_campaign
+
+        if app.working_campaign is None:
+            app.prepare_working_campaign(app.selected_campaign)
+
+        self.campaign = app.working_campaign
 
         self.game_number = ordinal_numbers(self.campaign.game)
 
@@ -184,14 +194,10 @@ class CampaignDetailsWindow(Screen):
 
         self.ids.rules_warning.opacity = 0 if self.campaign.matching_factions() else 1
         self.ids.rules_warning2.opacity = 0 if self.campaign.matching_factions() else 1
+        self.ids.main_button.opacity = 0 if self.campaign.game == 5 else 1
 
         # Starter dacks
         self.populate_card_rows(self.ids.starter_cards, self.campaign.players_deck(1), self.campaign.players_deck(2))
-
-        # Todo: Remove those fakes after tests
-        self.campaign.p1_removed_cards.update({"Yoda": 1})
-        self.campaign.p1_added_cards.update({"Darth Maul": 1})
-        self.campaign.p2_removed_bases.update({"dagobah": 1, "Illum": 1})
 
         # Removed galaxy cards
         self.populate_card_rows(self.ids.removed_cards, self.campaign.p1_removed_cards, self.campaign.p2_removed_cards)
@@ -208,8 +214,14 @@ class CampaignDetailsWindow(Screen):
     def primary_action(self):
         """Defines action for Screen primary button depending on the current screen mode (edit | errors | display)."""
 
+        # After fifth (last) game
+        if self.campaign.game == 5:
+            if __name__ == '__main__':
+                self.ids.main_button.hidden = True
+                self.ids.main_button.disabled = True
+                self.ids.main_button.opacity = 0
         # is in display mode
-        if not self.editable:
+        elif not self.editable:
             # switch to edit mode
             self.edit_mode(True)
             print("primary action made it editable")
@@ -226,18 +238,26 @@ class CampaignDetailsWindow(Screen):
         else:
             # turn off edit mode
             self.edit_mode(False)
-            # Refresh data?
-                # add +1 to battle number
+
+            # Increase game number
+            self.campaign.game += 1
+
             # save campaign
             app = App.get_running_app()
-            #ToDo: Create saving method
-            #app.data.save_campaign()
+            app.data.save_campaign()
+
+            self.refresh_screen()
 
         self.update_main_button()
 
+    def refresh_screen(self):
+        """After saving game reloads data to display"""
+        app = App.get_running_app()
+        self.campaign = app.working_campaign
+        self.game_number = ordinal_numbers(self.campaign.game)
+
     def update_main_button(self, *args):
         """Text and color for the main button depending on the current screen mode (edit | errors | display)."""
-        #print("buton text outer")
         # is in display mode
         if not self.editable:
             #print("display text")
@@ -279,32 +299,19 @@ class CampaignDetailsWindow(Screen):
         self.ids.force_6.disabled = disabled
         self.ids.p2_resource.disabled = disabled
 
-        # ToDo: Update here?
-        #self.update_main_button()
-
-
-        # ToDo:
-        #  Battle results changed to accept button
-        #       on_release: calls save campaign method in Data
-        #       Turn off edit
-        #       Add +1 to battle number
-        #       After confirming 5th battle counter displays "campaign finished" and disables all buttons
-        #  clean after leaving to camp selection
-
     def resource(self, app):
         """
         Draws first player
         """
         pl = self.campaign.players
-        #pl[0].first=True
-        # Todo: add check if players have first already set and move draw to new campaign creation screen
-        t = app.table
-        t.names = pl
-        t.players2()
+
         self.ids.p1_resource.state = "normal" if pl[0].first else "down"
         self.ids.p2_resource.state = "normal" if pl[1].first else "down"
 
         print(F"p1: {pl[0].first}, p2: {pl[1].first}")
+
+    def schedule_button_update(self, *args):
+        Clock.schedule_once(self.update_main_button, 0)
 
     def popup_selector(self, action: str, instance=None):
 
@@ -315,9 +322,8 @@ class CampaignDetailsWindow(Screen):
             popup.faction1 = self.campaign.players[0].faction.name
             popup.faction2 = self.campaign.players[1].faction.name
 
-            #popup.bind(on_dismiss=lambda *_: self.refresh_starter())
             popup.bind(on_dismiss=partial(self.refresh_starter, action))
-            popup.bind(on_dismiss=self.update_main_button)
+            popup.bind(on_dismiss=self.schedule_button_update)
 
             popup.open()
 
@@ -338,12 +344,7 @@ class CampaignDetailsWindow(Screen):
             popup.ids.faction2_card.hint_text = hints.get(action, "Card name")
 
             popup.bind(on_dismiss=partial(self.update_card_list, action))
-
-            # ToDo: Update button here?
-            popup.bind(on_dismiss=self.update_main_button)
-
-            #popup.bind(text=partial(self.update_card_list,action))
-            #popup.bind(text=partial(self.update_card_list,action, deck, i))
+            popup.bind(on_dismiss=self.schedule_button_update)
 
             popup.open()
 
@@ -352,38 +353,14 @@ class CampaignDetailsWindow(Screen):
             return
         self.populate_card_rows(self.ids.starter_cards, self.campaign.players_deck(1), self.campaign.players_deck(2))
 
-    def update_card_list(self, action, popup):
+    def update_card_list(self, action: str, popup):
         """
         Update the name of a card in the list.
-
-        :param deck: Class Faction or Reinforcements
-        :param index: Index of the card to update
-        :param widget: TextInput widget
-        :param text: New text for the card
-        """
-       # # if:
-       #  deck.rename_card(index, text)
-
-        # if action == "starter cards":
-        #     print("starter cards")
-        # elif action == "removed cards":
-        #     print("removed cards")
-        #     # chack if card is already on the list
-        #     card1_q = self.campaign.p1_removed_cards.get(text)
-        #     if card1_q is None:
-        #         card1_q = 0
-        #     # Add copy of card
-        #     self.campaign.p1_removed_cards.update({text: card1_q+1})
-        #
-        #     # self.p1_removed_cards: Dict[str, int] = {}
-        #     # self.p2_removed_cards: Dict[str, int] = {}
-        # elif action == "added cards":
-        #     print("added cards")
-        # elif action == "removed bases":
-        #     print("removed bases")
-
-        """
         Add cards from the popup inputs to the campaign list selected by action.
+
+        :param action: string representing the action
+        :param popup: Instance of Popup
+
         """
         lists_by_action = {
             "removed cards": (
@@ -417,7 +394,6 @@ class CampaignDetailsWindow(Screen):
 
         self.populate_card_rows(container, p1_cards, p2_cards)
 
-
     @staticmethod
     def add_card_copy(cards: dict[str, int], card_name: str):
         card_name = card_name.strip()
@@ -434,7 +410,6 @@ class CampaignDetailsWindow(Screen):
         :param p1_column: Dictionary of card names and quantities for player 1
         :param p2_column: Dictionary of card names and quantities for player 2
         """
-        #starters = self.ids.starter_cards
         container_id.clear_widgets()
 
         # Starter decks rows number
@@ -461,10 +436,12 @@ class CampaignDetailsWindow(Screen):
 
     def exit_cleanup(self):
         """Setups properties to default values"""
-        # Todo: clean this screen,
-        #  made temporary campaign variable (copy) to work on
-        #  save: overwrite original
+        self.populate_card_rows(self.ids.starter_cards, {}, {})
+        self.populate_card_rows(self.ids.removed_cards, {}, {})
+        self.populate_card_rows(self.ids.added_cards, {}, {})
+        self.populate_card_rows(self.ids.removed_bases, {}, {})
 
+        App.get_running_app().clear_working_elements()
 
 class NewCampaignWindow(Screen):
     """
@@ -477,9 +454,11 @@ class NewCampaignWindow(Screen):
     def on_pre_enter(self):
         app = App.get_running_app()
 
-        self.players = app.data.get_players()
-        self.factions = app.fc
-        self.reinforcements = app.rein
+        app.prepare_working_elements()
+
+        self.players = [app.pl_working[0], app.pl_working[1]] # 2 players in campaign
+        self.factions = app.fc_working
+        self.reinforcements = app.rein_working
 
         self.update_status()
 
@@ -525,7 +504,6 @@ class NewCampaignWindow(Screen):
         # other player index
         other = 1 if player_index == 0 else 0
 
-        #available_factions = [faction.name for faction in self.factions if faction.name not in self.players[other].faction]
         if self.players[other].faction is not None:
             available_factions = [faction.name for faction in self.factions if
                               faction.name != self.players[other].faction.name]
@@ -548,9 +526,11 @@ class NewCampaignWindow(Screen):
         popup.bind(on_dismiss=lambda *_: self._apply_faction_selection(popup.selected_faction, player_index))
         popup.open()
 
-
-    def _apply_faction_selection(self, faction_name, player_index):
-
+    def _apply_faction_selection(self, faction_name:str, player_index: int):
+        """
+        Applies selected faction to player basing on name of a chosen faction.
+        :param faction_name: faction name
+        :param player_index: player index"""
         if not faction_name:
             return
 
@@ -592,14 +572,33 @@ class NewCampaignWindow(Screen):
         self.update_status()
 
     def start_campaign(self):
+        """Draws the first player and creates a new campaign instance, then saves it to the file."""
+
         app = App.get_running_app()
-        app.data.new_campaign(self.players)
+        pl = self.players
+        print(pl)
+        print(len(pl))
+
+        # Re-use Game table
+        t = deepcopy(app.table)  # Call game table module
+        t.names = pl  # Set players names
+        t.nbr_of_players(len(pl))  # Number of players
+        t.players2()  # draw first player
+
+        app.data.new_campaign(pl)
+
+        new = app.data.campaigns[0]
+
+        app.prepare_working_campaign(new)
 
     def clean_fields(self):
+        """Restores screen to entry view, and removes working instances of the game elements."""
         self.ids.faction1.text = "Select faction"
         self.ids.faction2.text = "Select faction"
         self.ids.exp_faction1.text = "Reinforcements"
         self.ids.exp_faction2.text = "Reinforcements"
+
+        App.get_running_app().clear_working_elements()
 
 
 class SelectFactionPopup(Popup):
@@ -635,9 +634,7 @@ class StarterCardsPopup(Popup):
 
     def on_open(self):
         app = App.get_running_app()
-        campaign = app.selected_campaign
-
-        # ToDO: add method to both decks access
+        campaign = app.working_campaign
 
         self.populate(self.ids.player1_grid, campaign.p1_start)
         self.populate(self.ids.player2_grid, campaign.p2_start)
@@ -658,7 +655,7 @@ class DeckErrorsPopup(Popup):
 
     def on_open(self):
         app = App.get_running_app()
-        errors = app.selected_campaign.campaign_valid()
+        errors = app.working_campaign.campaign_valid()
         print(f"in popup:{errors}")
 
         errors_grid = self.ids.errors_grid
@@ -677,9 +674,29 @@ class DeckErrorsPopup(Popup):
 
             errors_grid.add_widget(line)
 
-# ToDo: Starter Popup
-#    Confirm button is available if campaign validators ar ok (make working validators)
-#    updates game number (bind on popup like 272, 292 ?
-#    saves game (make class to dict, and dict to class)
-#
-#
+
+class DeleteCampaignPopup(Popup):
+    def __init__(self, campaign, on_confirm, **kwargs):
+        super().__init__(**kwargs)
+        self.title_size = 0  # no title line
+        self.separator_height = 0  # no separator line
+        self.size_hint = (0.8, 0.4)
+
+        text="Hello there!\nAre you sure you want to delete this campaign?\nArchives may become incomplete."
+
+        layout = BoxLayout(orientation='vertical', padding=10, spacing=10)
+        layout.add_widget(Label(text=text))
+
+        buttons = BoxLayout(spacing=10, size_hint_y=None, height=dp(50))
+
+        yes_btn = Button(text="Yes")
+        yes_btn.bind(on_release=lambda x: [on_confirm(campaign), self.dismiss()])
+
+        no_btn = Button(text="No")
+        no_btn.bind(on_release=self.dismiss)
+
+        buttons.add_widget(yes_btn)
+        buttons.add_widget(no_btn)
+        layout.add_widget(buttons)
+
+        self.content = layout

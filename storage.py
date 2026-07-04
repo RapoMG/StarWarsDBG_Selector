@@ -1,5 +1,5 @@
 # same file for players and games as separate entries
-from typing import List
+from typing import List, Any
 
 # get players from here and send to Table by caller
 
@@ -14,6 +14,8 @@ class Data:
     def __init__(self):
         #Default players
         self.players = [Player(f"Player {_+1}") for _ in range(4)]
+
+        # toDO: save and load card rename base - changes to popup
 
         # Default factions
         self.factions = [
@@ -40,13 +42,15 @@ class Data:
             self.factions[2].box,
         ]
 
+        # All campaigns list
         self.campaigns: List[Campaign] = []
 
     @staticmethod
     def file_path() -> str:
         """
         Gets running app instance and specifies file path
-        return: file path
+        :
+        :return: file path
         """
         # App instance
         app = App.get_running_app()
@@ -54,7 +58,6 @@ class Data:
 
         # file path
         json_file = os.path.join(data_dir, "settings.json")
-
         return json_file
 
     def load_file(self) -> None:
@@ -70,8 +73,9 @@ class Data:
                     data = json.load(f)
                     # rebuild this structure for campaign mode
                     # Set players
-                    names = data.values()
-                    self.update_players(names)
+                    print(f"Loading data from file:\n {data}")
+
+                    self.dict_to_data(data)
 
             except json.decoder.JSONDecodeError:
                 return None
@@ -86,11 +90,11 @@ class Data:
         and writes the provided data object to the file in JSON format.
         Existing content will be overwritten."""
 
-        # Take data (players , campaign?) and save
-
         with open(self.file_path(), "w", encoding="utf-8") as f:
-            data = self.json_players() # Change with campaign
+            data = self.data_to_dict()
             json.dump(data, f,indent=4, ensure_ascii=False)
+
+            print(self.file_path())
 
     def get_players(self):
         # return players
@@ -109,19 +113,62 @@ class Data:
             player.rename(name)
 
     def new_campaign(self, players: List[Player]):
-
+        """Creates new campaign and assign it to the beginning of campaign list, then saves it.
+        :param players: list of Players instances
+        """
         campaign = Campaign(players)
 
+        # new campaign first
         self.campaigns.insert(0, campaign)
+        # save
+        self.save_file()
 
-        #call saving method
+    def save_campaign(self):
+        """Saves current campaign to file, based on app variables selected_campaign and working_campaign.
+        Saved campaign will be moved to the beginning of campaign list."""
+        app = App.get_running_app()
 
+        new = app.working_campaign
+        old = app.selected_campaign
 
-    def json_players(self) -> dict[str, str]:
+        # insert campaign to the list
+        self.campaigns.insert(0, new)
+        # remove original instance
+        self.campaigns.remove(old)
+        # save the file
+        self.save_file()
+
+        # Create new base
+        old = new
+        app.prepare_working_campaign(old)
+
+    def players_to_dict(self) -> dict[str, str]:
         """
-        Returns a dictionary of players names in JSON format.
+        Returns a dictionary of players names .
         """
         pl_names = {f"player{i+1}": self.players[i].name for i in range(len(self.players))}
 
         return pl_names
 
+    def data_to_dict(self) -> dict[str, dict[str, Any]]:
+        """Converts stored data object to a dictionary."""
+
+        players = {"players": self.players_to_dict()}
+        factions = {"factions": [faction.to_dict() for faction in self.factions]}
+        campaign = {"campaigns": [campaign.to_dict() for campaign in self.campaigns]}
+
+        return players | factions | campaign
+
+    def dict_to_data(self, data):
+        """Converts data dictionary to Data() stored objects.
+        :param data: data dictionary
+        """
+
+        # Players names
+        self.update_players(data["players"].values())
+        #Factions
+        self.factions = [Faction.from_dict(faction) for faction in data["factions"]]
+        # Campaign
+        # skip if list is empty
+        if data["campaigns"]:
+            self.campaigns = [Campaign.from_dict(campaign) for campaign in data["campaigns"]]
