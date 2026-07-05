@@ -85,7 +85,7 @@
                     do_scroll_x: False
 
                     GridLayout:
-                        rows: 9
+                        rows: 15
                         cols: 1
                         size_hint_y: None
                         height: self.minimum_height
@@ -147,6 +147,45 @@
                             cols: 1
                             rows: 5
                             id: imp_re_layout
+
+                            size_hint_y: None
+                            height: self.minimum_height
+
+                        Label:
+                            text: "Republic"
+                            size_hint_y: None
+                            height: self.texture_size[1]
+
+                        GridLayout:
+                            cols: 1
+                            rows: 3
+                            id: pub_layout
+
+                            size_hint_y: None
+                            height: self.minimum_height
+
+                        Label:
+                            text: "Separatists"
+                            size_hint_y: None
+                            height: self.texture_size[1]
+
+                        GridLayout:
+                            cols: 1
+                            rows: 3
+                            id: sep_layout
+
+                            size_hint_y: None
+                            height: self.minimum_height
+
+                        Label:
+                            text: "Mandalorian"
+                            size_hint_y: None
+                            height: self.texture_size[1]
+
+                        GridLayout:
+                            cols: 1
+                            rows: 3
+                            id: mando_layout
 
                             size_hint_y: None
                             height: self.minimum_height

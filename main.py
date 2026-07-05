@@ -349,6 +349,11 @@ class InfoPopup(Popup):
         reb_rein = app.rein[0]
         imp_rein = app.rein[1]
 
+        pub_cards = app.fc[2]
+        sep_cards = app.fc[3]
+
+        mando_cards = app.fc[4]
+
 
         self.populate_cards_list(
             self.ids.reb_layout,
@@ -368,6 +373,21 @@ class InfoPopup(Popup):
         self.populate_cards_list(
             self.ids.imp_re_layout,
             imp_rein
+        )
+
+        self.populate_cards_list(
+            self.ids.pub_layout,
+            pub_cards
+        )
+
+        self.populate_cards_list(
+            self.ids.sep_layout,
+            sep_cards
+        )
+
+        self.populate_cards_list(
+            self.ids.mando_layout,
+            mando_cards
         )
 
     def populate_cards_list(self, container, deck):
