@@ -1,12 +1,14 @@
 from copy import deepcopy
 from itertools import zip_longest
 
+from kivy.core.window import Window
 from kivy.properties import StringProperty, NumericProperty, BooleanProperty, ObjectProperty
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.button import Button
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.relativelayout import RelativeLayout
 
 from kivy.uix.screenmanager import Screen
 from kivy.uix.popup import Popup
@@ -28,12 +30,18 @@ class CampaignButton(ButtonBehavior, FloatLayout):
     game = StringProperty("")
 
     p1_name = StringProperty("")
-    p1_faction = StringProperty("")
+    p1_faction_image = StringProperty("")
+
     p1_reinforcements = StringProperty("")
 
     p2_name = StringProperty("")
-    p2_faction = StringProperty("")
+    #p2_faction = StringProperty("")
+    p2_faction_image = StringProperty("")
     p2_reinforcements = StringProperty("")
+
+
+class DeleteBtn(Button):
+    pass
 
 
 class EditableArea(ButtonBehavior, GridLayout):
@@ -110,24 +118,24 @@ class CampaignsListWindow(Screen):
 
         for campaign in self.campaigns:
             # Create a container for the campaign button and the delete button
-            row = BoxLayout(size_hint_y=None, height=dp(120), spacing=10)
+            row = BoxLayout(size_hint_y=None, height=dp(120), spacing=30, padding=(dp(25),0,dp(10),dp(2)))
 
             campaign_button = CampaignButton(
                 game=ordinal_numbers(campaign.game),
 
                 p1_name=campaign.players[0].name,
-                p1_faction=campaign.players[0].faction.name,
+                p1_faction_image=self.faction_name(campaign.players[0].faction.name),
                 p1_reinforcements=campaign.players[0].reinforcements.faction_name,
 
                 p2_name=campaign.players[1].name,
-                p2_faction=campaign.players[1].faction.name,
+                p2_faction_image=self.faction_name(campaign.players[1].faction.name),
                 p2_reinforcements=campaign.players[1].reinforcements.faction_name,
             )
 
             campaign_button.bind(on_release=partial(self.campaign_selection, campaign))
 
             # Smaller delete button
-            delete_btn = Button(text="X", size_hint=(None, 1), width=dp(50), background_color=(1, 0, 0, 1))
+            delete_btn = DeleteBtn()
             delete_btn.bind(on_release=partial(self.confirm_delete, campaign))
 
             row.add_widget(campaign_button)
@@ -159,6 +167,25 @@ class CampaignsListWindow(Screen):
 
         self.manager.current = "campaign_details"
 
+    def faction_name(self,faction_name: str) -> str:
+        """
+        Returns faction image depending on chosen name.
+        :param faction_name: name of faction
+        :type: string,
+        :return: string.
+        """
+
+
+        image = {
+            "Rebel": "images/fact_buttons/reb_on.png",
+            "Empire": "images/fact_buttons/emp_on.png",
+            "Republic": "images/fact_buttons/rep_on.png",
+            "Separatists": "images/fact_buttons/sep_on.png",
+            "Mandalorian": "images/fact_buttons/mand_on.png",
+        }
+
+        # Placeholder implementation - replace with actual faction image paths
+        return image.get(faction_name, "images/icon.png")
 
 class CampaignDetailsWindow(Screen):
     """
@@ -443,6 +470,7 @@ class CampaignDetailsWindow(Screen):
 
         App.get_running_app().clear_working_elements()
 
+
 class NewCampaignWindow(Screen):
     """
     New campaign
@@ -576,8 +604,6 @@ class NewCampaignWindow(Screen):
 
         app = App.get_running_app()
         pl = self.players
-        print(pl)
-        print(len(pl))
 
         # Re-use Game table
         t = deepcopy(app.table)  # Call game table module
