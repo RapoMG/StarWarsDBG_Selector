@@ -67,6 +67,17 @@ ScreenManager:
             size: root.width, root.height
             pos: self.pos
 
+<WallBackground@Widget>
+    size: root.width, root.height
+    orientation: "horizontal"
+    spacing: 10
+
+    canvas:
+        Rectangle:
+            source:'backgrounds/panel.png'
+            size: root.width, root.height
+            pos: self.pos
+
 #Buttons
 <Button>
     font_size: min(Window.width, Window.height) * 0.04
@@ -87,6 +98,13 @@ ScreenManager:
 
     pos_hint :{'center_x':0.5, 'center_y':0.25}
     size_hint: .62, .18  #.50, .058
+    height: self.minimum_height
+    halign: "center"
+    valign: "middle"
+    height: self.texture_size[1]
+
+    text_size: self.width - dp(20), None
+    padding: dp(10), dp(10)
 
 
 <Back@Button>
@@ -102,6 +120,14 @@ ScreenManager:
 
     pos_hint :{'center_x':0.5, 'center_y':0.1}
     size_hint: .55, .16
+#    size_hint_y: None # allows dynamic height and correct scrolling
+    height: self.minimum_height
+    halign: "center"
+    valign: "middle"
+    height: self.texture_size[1]
+
+    text_size: self.width - dp(20), None
+    padding: dp(10), dp(10)
 
 <TempBackground@Widget>
     size: root.width, root.height

@@ -3,7 +3,7 @@
     on_pre_enter: root.on_pre_enter()
 
 
-    TempBackground:
+    WallBackground: # Background:
 
     FloatLayout: # window main container
 
@@ -11,63 +11,120 @@
             orientation: "vertical"
             size_hint: (1, 0.85)
             pos_hint: {"center_x": 0.5, "center_y": 0.572}
-            canvas.before:
-                Color:
-                    rgba: (0.33, 1, 0.73, 0.812)
-                Line:
-                    rounded_rectangle:
-                        self.x, self.y, self.width, self.height, 10
+#            canvas.before:
+#                Color:
+#                    rgba: (0.33, 1, 0.73, 0.812)
+#                Line:
+#                    rounded_rectangle:
+#                        self.x, self.y, self.width, self.height, 10
 
-            TempLabel:
-                color: "black"
-                text: "game number 1/5"
+            # Title
+            Label:
+                color: (1, 1, 0, 0.96)
+                text: "New Campaign"
+                font_name: "SW"
+                font_size: min(Window.width, Window.height) * 0.07
                 pos_hint: {"center_y":.9, "center_x":0.5}
+                size_hint_x: 1
+                size_hint_y: None
+                height: self.texture_size[1]
 
-            GridLayout: # player faction container
+                # Panel background variant
+                color: (1, .81, 0, 0.86)
+                bold: True
+                outline_width: 1
+                outline_color: (0.59, .27, 0.81, 0.812)
+
+            # Players factions container
+            GridLayout:
                 rows: 1
                 cols: 2
                 size_hint: (1, 0.2)
                 orientation: "tb-lr" # top-bottom, left-right/ Use here to display cards vertically (better readability)
 
                 # Player 1
-                Button:
+                FactionBtn:
                     id: faction1
-                    color: "black"
-                    text: "Select faction"
+#                    color: "black"
+#                    text: "Select faction"
                     on_release: root.chose_faction(0)
 
+#                    size_hint 0.5, 0.5
+#                    background_normal:''
+#                    background_down:''
+#                    background_color: (0, 0, 0, 0)
+#
+#                    Image:
+#                        id: faction1
+#                        source: 'nav_buttons/quest.png'
+#                        pos: root.pos
+#                        size: root.size
+#                        fit_mode: "contain"
+#                        color: (1, 1, 1, 1) if root.state == 'normal' else (0.7, 0.7, 0.7, 1)
+
                 # Player 2
-                Button:
+                FactionBtn:
                     id: faction2
-                    text: "Select faction"
-                    color: "black"
+#                    text: "Select faction"
+#                    color: "black"
                     on_release: root.chose_faction(1)
 
-            TempLabel:
+            # Leaders header
+            Label:
                 color: "black"
-                text: "Leader"
+                text: "Leaders"
+                font_size: min(Window.width, Window.height) * 0.038
+                font_name: "Results"
+                color: (0.59, .27, 0.81, 0.812)
                 pos_hint: {"center_y":.9, "center_x":0.5}
+                outline_width: 1
+                outline_color: (1, 1, 1, 0.5)
+                size_hint_x: 1
+                size_hint_y: None
+                height: self.texture_size[1]
 
-            GridLayout: # player name container
+            # Players names container
+            GridLayout:
                 rows: 1
                 cols: 2
                 size_hint: (1, 0.2)
+                size_hint_y: None # allows dynamic height and correct scrolling
+                height: self.minimum_height
                 orientation: "tb-lr"
 
-                TempLabel:
+                Label:
                     id: player1
-                    color: "black"
+                    font_size: root.height * 0.038 if len(self.text) <= 13 else (root.height * 0.034)
+                    font_name: "Holo"
+                    color: (0.33, 1, 0.68, 0.812)
                     text: "player1 name"
+                    size_hint_x: 1
+                    size_hint_y: None
+                    height: self.texture_size[1]
 
-                TempLabel:
+                Label:
                     id: player2
-                    color: "black"
+                    font_size: root.height * 0.038 if len(self.text) <= 10 else (root.height * 0.028)
+                    font_name: "Holo"
+                    color: (0.33, 1, 0.68, 0.812)
                     text: "player2 name"
+                    size_hint_x: 1
+                    size_hint_y: None
+                    height: self.texture_size[1]
 
-            TempLabel:
-                color: "black"
+            # Reinforcements label
+            Label:
                 text: "Reinforcements"
+                font_size: min(Window.width, Window.height) * 0.038
+                font_name: "Results"
+                color: (0.59, .27, 0.81, 0.812)
                 pos_hint: {"center_y":.9, "center_x":0.5}
+                outline_width: 1
+                outline_color: (1, 1, 1, 0.5)
+                size_hint_x: 1
+                size_hint_y: None
+                height: self.texture_size[1]
+                padding: 0, dp(15),0,0
 
             GridLayout: # player reinforcements container
                 rows: 1
@@ -75,30 +132,46 @@
                 size_hint: (1, 0.2)
                 orientation: "tb-lr"
 
-                Button: # expansion faction hidden if same as default faction (for both players)
+                FactionBtn: # expansion faction hidden if same as default faction (for both players)
                     id: exp_faction1
-                    color: "black"
-                    text: "Reinforcements"
+#                    color: "black"
+#                    text: "Reinforcements"
                     on_release: root.chose_reinforcements(0)
 
-                Button: # expansion faction hidden if same as default faction (for both players)
+                FactionBtn: # expansion faction hidden if same as default faction (for both players)
                     id: exp_faction2
-                    color: "black"
-                    text: "Reinforcements"
-                    on_release: root.chose_reinforcements(0)
+#                    color: "black"
+#                    text: "Reinforcements"
+                    on_release: root.chose_reinforcements(1)
 
-            TempLabel:
+            Label:
                 id: rules_warning
                 color: "red"
-                bold: True
+#                bold: True
                 text: "Warning! The selected sets do not comply with the official rules of the game."
                 opacity: 0
+                font_size: min(Window.width, Window.height) * 0.028
+                font_name: "Results"
+#                color: (0.59, .27, 0.81, 0.812)
+                multiline: True
+                pos_hint: {"center_y":.9, "center_x":0.5}
+                outline_width: 2
+                outline_color: (1, 1, 1, 0.5)
+                size_hint_y: None # allows dynamic height and correct scrolling
+                #height: self.minimum_height
+                halign: "center"
+                valign: "middle"
+                height: self.texture_size[1]
 
-            TempButton:
+                text_size: self.width - dp(20), None
+                padding: dp(10), dp(10)
+
+            Next:
+            #TempButton:
                 id: start
-                text: "Start campaign>>"
-                pos_hint: {"center_x": 0.5, "center_y": 1}
-                size_hint: (0.6, 0.2)
+                text: "Give orders to attack!"
+                #pos_hint: {"center_x": 0.5, "center_y": 1}
+                #size_hint: (0.6, 0.2)
                 opacity: 0
                 on_release:
                     root.start_campaign()
@@ -106,8 +179,21 @@
 
         # Previous window button
         Back:
-            text: "<<campaigns_list"
+            text: "That is unacceptable!"
             on_release:
                 root.clean_fields()
                 app.root.current = "campaigns_list"
 
+
+<FactionBtn>
+    size_hint: (1, 1)
+    background_normal:''
+    background_down:''
+    background_color: (0, 0, 0, 0)
+
+    Image:
+        source: root.source if root.source else 'nav_buttons/quest.png'
+        pos: root.pos
+        size: root.size
+        fit_mode: "contain"
+        color: (1, 1, 1, 1) if root.state == 'normal' else (0.7, 0.7, 0.7, 1)

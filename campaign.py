@@ -41,8 +41,12 @@ class CampaignButton(ButtonBehavior, FloatLayout):
 
 
 class DeleteBtn(Button):
+    """Delete Campaign button declaration"""
     pass
 
+class FactionBtn(Button):
+    """Select faction button declaration"""
+    source = StringProperty('nav_buttons/quest.png') # Default image
 
 class EditableArea(ButtonBehavior, GridLayout):
     editable = BooleanProperty(False)
@@ -95,6 +99,26 @@ def ordinal_numbers(game_number: int) -> str:
     else:
         word = numeral_words[game_number - 1]
     return word
+
+def faction_name(faction_name: str) -> str:
+    """
+    Returns faction image depending on chosen name.
+    :param faction_name: name of faction
+    :type: string,
+    :return: string.
+    """
+
+
+    image = {
+        "Rebel": "images/fact_buttons/reb_on.png",
+        "Empire": "images/fact_buttons/emp_on.png",
+        "Republic": "images/fact_buttons/rep_on.png",
+        "Separatists": "images/fact_buttons/sep_on.png",
+        "Mandalorian": "images/fact_buttons/mand_on.png",
+    }
+
+    # Placeholder implementation - replace with actual faction image paths
+    return image.get(faction_name, "images/icon.png")
 
 
 # Campaign windows
@@ -498,15 +522,16 @@ class NewCampaignWindow(Screen):
 
         # Factions
         if self.players[0].faction is not None:
-            self.ids.faction1.text = self.players[0].faction.name
+            # self.ids.faction1.text = self.players[0].faction.name
+            self.ids.faction1.source = faction_name(self.players[0].faction.name)
         if self.players[1].faction is not None:
-            self.ids.faction2.text = self.players[1].faction.name
+            self.ids.faction2.source = faction_name(self.players[1].faction.name)
 
         # Reinforcements
         if self.players[0].reinforcements is not None:
-            self.ids.exp_faction1.text = self.players[0].reinforcements.faction_name
+            self.ids.exp_faction1.source = faction_name(self.players[0].reinforcements.faction_name)
         if self.players[1].reinforcements is not None:
-            self.ids.exp_faction2.text = self.players[1].reinforcements.faction_name
+            self.ids.exp_faction2.source = faction_name(self.players[1].reinforcements.faction_name)
 
 
         self.ids.rules_warning.opacity = 0
@@ -517,7 +542,7 @@ class NewCampaignWindow(Screen):
 
             # Rules warning display
             if (self.players[0].faction.name != self.players[0].reinforcements.faction_name
-                and self.players[1].faction.name != self.players[1].reinforcements.faction_name):
+                or self.players[1].faction.name != self.players[1].reinforcements.faction_name):
 
                 self.ids.rules_warning.opacity = 1
 
@@ -619,10 +644,10 @@ class NewCampaignWindow(Screen):
 
     def clean_fields(self):
         """Restores screen to entry view, and removes working instances of the game elements."""
-        self.ids.faction1.text = "Select faction"
-        self.ids.faction2.text = "Select faction"
-        self.ids.exp_faction1.text = "Reinforcements"
-        self.ids.exp_faction2.text = "Reinforcements"
+        self.ids.faction1.source = "nav_buttons/quest.png"
+        self.ids.faction2.source = "nav_buttons/quest.png"
+        self.ids.exp_faction1.source = "nav_buttons/quest.png"
+        self.ids.exp_faction2.source = "nav_buttons/quest.png"
 
         App.get_running_app().clear_working_elements()
 
