@@ -44,9 +44,11 @@ class DeleteBtn(Button):
     """Delete Campaign button declaration"""
     pass
 
+
 class FactionBtn(Button):
     """Select faction button declaration"""
     source = StringProperty('nav_buttons/quest.png') # Default image
+
 
 class EditableArea(ButtonBehavior, GridLayout):
     editable = BooleanProperty(False)
@@ -221,6 +223,8 @@ class CampaignDetailsWindow(Screen):
 
     editable = BooleanProperty(False)  # switch between view and edit Screen
 
+    warning = "You won’t find any mention of this extraordinary alliance in the official archives."
+
     main_button_text = StringProperty("Resolve the Battle")
 
     def on_pre_enter(self, *args):
@@ -235,16 +239,18 @@ class CampaignDetailsWindow(Screen):
 
         # Player 1 headers
         self.ids.player1.text = self.campaign.players[0].name
-        self.ids.faction1.text = self.campaign.players[0].faction.name
+        #self.ids.faction1.text = self.campaign.players[0].faction.name
+        self.ids.faction1.source = faction_name(self.campaign.players[0].faction.name)
         self.ids.rein1.text = self.campaign.players[0].reinforcements.faction_name
 
         # Player 2 headers
         self.ids.player2.text = self.campaign.players[1].name
-        self.ids.faction2.text = self.campaign.players[1].faction.name
+        #self.ids.faction2.text = self.campaign.players[1].faction.name
+        self.ids.faction2.source = faction_name(self.campaign.players[1].faction.name)
         self.ids.rein2.text = self.campaign.players[1].reinforcements.faction_name
 
         self.ids.rules_warning.opacity = 0 if self.campaign.matching_factions() else 1
-        self.ids.rules_warning2.opacity = 0 if self.campaign.matching_factions() else 1
+        self.ids.rules_warning.text = "" if self.campaign.matching_factions() else self.warning
         self.ids.main_button.opacity = 0 if self.campaign.game == 5 else 1
 
         # Starter dacks
@@ -464,7 +470,7 @@ class CampaignDetailsWindow(Screen):
         container_id.clear_widgets()
 
         # Starter decks rows number
-        container_id.rows = max(len(p1_column), len(p2_column))
+        # container_id.rows = max(len(p1_column), len(p2_column))
 
         # Starter decks rows
         for p1_card, p2_card in zip_longest(p1_column, p2_column, fillvalue=""):
@@ -491,6 +497,8 @@ class CampaignDetailsWindow(Screen):
         self.populate_card_rows(self.ids.removed_cards, {}, {})
         self.populate_card_rows(self.ids.added_cards, {}, {})
         self.populate_card_rows(self.ids.removed_bases, {}, {})
+
+        self.edit_mode(False)
 
         App.get_running_app().clear_working_elements()
 

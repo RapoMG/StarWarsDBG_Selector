@@ -98,7 +98,7 @@ ScreenManager:
 
     pos_hint :{'center_x':0.5, 'center_y':0.25}
     size_hint: .62, .18  #.50, .058
-    height: self.minimum_height
+
     halign: "center"
     valign: "middle"
     height: self.texture_size[1]
@@ -114,17 +114,16 @@ ScreenManager:
     font_name: "Comic"
     bold: True
 
-    background_color: (1,1,1,1)
     background_normal: 'nav_buttons/bubble_left.png'
     background_down: 'nav_buttons/bubble_left_press.png'
 
     pos_hint :{'center_x':0.5, 'center_y':0.1}
-    size_hint: .55, .16
-#    size_hint_y: None # allows dynamic height and correct scrolling
-    height: self.minimum_height
+    size_hint: .55, .14 #.16
+    size_hint_y: None # allows dynamic height and correct scrolling
+
     halign: "center"
     valign: "middle"
-    height: self.texture_size[1]
+
 
     text_size: self.width - dp(20), None
     padding: dp(10), dp(10)
