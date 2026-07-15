@@ -1,6 +1,7 @@
 from copy import deepcopy
 from itertools import zip_longest
 
+from kivy.uix.image import Image
 from kivy.core.window import Window
 from kivy.properties import StringProperty, NumericProperty, BooleanProperty, ObjectProperty
 from kivy.uix.behaviors import ButtonBehavior
@@ -581,8 +582,13 @@ class NewCampaignWindow(Screen):
             field3=available_factions[2],
             field4=available_factions[3],
             field5=available_factions[4],
-
         )
+
+        popup.ids.field1.source = faction_name(available_factions[0])
+        popup.ids.field2.source = faction_name(available_factions[1])
+        popup.ids.field3.source = faction_name(available_factions[2])
+        popup.ids.field4.source = faction_name(available_factions[3])
+        popup.ids.field5.source = faction_name(available_factions[4])
 
         popup.bind(on_dismiss=lambda *_: self._apply_faction_selection(popup.selected_faction, player_index))
         popup.open()
@@ -615,6 +621,9 @@ class NewCampaignWindow(Screen):
             field5="",
 
         )
+
+        popup.ids.field1.source = faction_name(self.reinforcements[0].faction_name)
+        popup.ids.field2.source = faction_name(self.reinforcements[1].faction_name)
 
         popup.bind(on_dismiss=lambda *_: self._apply_rein_selection(popup.selected_faction, player_index, other))
         popup.open()

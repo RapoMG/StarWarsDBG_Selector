@@ -1,10 +1,15 @@
 <SelectFactionPopup>
 
-    title_size: 0  # no title line
+    #title_size: 0  # no title line
     separator_height:0 # no separator line
+    title: "_Select Faction_"
+    title_font: "Holo"
+    title_color: (0.33, 1, 0.73, 0.812)
+    title_align: "center"
+    title_size: dp(26)
 
     auto_dismiss: True # auto_dismiss set to True to allow user to dismiss popup
-    size_hint: (0.9, 0.35)
+    size_hint: (0.9, 0.45)
 
     background: 'images/backgrounds/fog.png'
 
@@ -12,52 +17,73 @@
         cols: 1
         rows: 5
 
-        Button:
-            text: root.field1
-            size_hint_x: 1
-            size_hint_y: None
-            height: self.texture_size[1]
-            on_release:
-                root.assign_faction(root.field1)
+        AnchorLayout:
+            anchor_x: 'center'
+            anchor_y: 'center'
 
-        Button:
-            text: root.field2
-            size_hint_x: 1
-            size_hint_y: None
-            height: self.texture_size[1]
-            on_release:
-                root.assign_faction(root.field2)
+            FactionBtn:
+                id: field1
+                size_hint: (0.5,0.5)
+                on_release:
+                    root.assign_faction(root.field1)
 
-        Button:
-            text: root.field3
-            size_hint_x: 1
-            size_hint_y: None
-            height: self.texture_size[1]
-            on_release:
-                root.assign_faction(root.field3)
+        AnchorLayout:
+            anchor_x: 'center'
+            anchor_y: 'center'
+
+            FactionBtn:
+                id: field2
+                size_hint: (0.5,0.5)
+                on_release:
+                    root.assign_faction(root.field2)
+
+        AnchorLayout:
+            anchor_x: 'center'
+            anchor_y: 'center'
             opacity: 0 if root.field3 == "" else 1
 
-        Button:
-            text: root.field4
-            size_hint_x: 1
-            size_hint_y: None
-            height: self.texture_size[1]
-            on_release:
-                root.assign_faction(root.field4)
+            FactionBtn:
+                id: field3
+                size_hint: (0.5,0.5)
+                on_release:
+                    root.assign_faction(root.field3)
+
+
+        AnchorLayout:
+            anchor_x: 'center'
+            anchor_y: 'center'
             opacity: 0 if root.field4 == "" else 1
 
-        Button:
-            text: root.field5
-            size_hint_x: 1
-            size_hint_y: None
-            height: self.texture_size[1]
-            on_release:
-                root.assign_faction(root.field5)
+            FactionBtn:
+                id: field4
+                size_hint: (0.5,0.5)
+                on_release:
+                    root.assign_faction(root.field4)
+
+        AnchorLayout:
+            anchor_x: 'center'
+            anchor_y: 'center'
             opacity: 0 if root.field5 == "" else 1
 
+            FactionBtn:
+                id: field5
+                size_hint: (0.5,0.5)
+                on_release:
+                    root.assign_faction(root.field5)
 
+#### Move to main?
+<FactionBtn>
+    size_hint: (.5, .5)
+    background_normal:''
+    background_down:''
+    background_color: (0, 0, 0, 0)
 
-
+    Image:
+        source: root.source if root.source else 'nav_buttons/quest.png'
+        pos: root.pos
+        size: root.size
+        fit_mode: "contain"
+        color: (1, 1, 1, 1) if root.state == 'normal' else (0.7, 0.7, 0.7, 1)
 
 
 
