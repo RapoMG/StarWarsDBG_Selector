@@ -27,6 +27,8 @@
                         size_hint_y: None
                         height: self.minimum_height
                         spacing: dp(4)
+                        padding: (dp(20),dp(40),dp(20),dp(20))
+
 
             PopPanel:
                 text: root.faction2
@@ -39,7 +41,7 @@
                         size_hint_y: None
                         height: self.minimum_height
                         spacing: dp(4)
-
+                        padding: (dp(20),dp(40),dp(20),dp(20))
 
         Button:
             text: 'Return'
@@ -51,7 +53,6 @@
             pos_hint :{'center_x':0.5, 'center_y':0.048}
             background_normal: 'images/nav_buttons/tab_fog_med.png'
             background_down: 'images/nav_buttons/tab_fog_dark.png'
-
 
             canvas.after:
                 # Normal
@@ -78,30 +79,57 @@
                     width: 4
 
             on_release:
-
                 root.dismiss()
 
 <StarterCardsRow>
     size_hint_y: None
-    height: dp(40)
-    spacing: dp(10)
+    height: dp(50)
+    spacing: dp(5)
+    #color: (0.33, 1, 0.73, 0.812)
+    #font_name: "Holo"
+    #font_size: min(Window.width, Window.height) * 0.05
 
     Label:
         text: root.card_name
+        color: (0.33, 1, 0.73, 0.812)
+        font_name: "Holo"
+        font_size: min(Window.width, Window.height) * 0.05
 
     Button:
-        text: "-"
         size_hint_x: None
-        width: dp(40)
+        width: root.height * 0.6
+        background_normal:''
+        background_down:''
+        background_color: (0, 0, 0, 0)
         on_release: root.decrease()
+
+        Image:
+            source: "dir_buttons/arrow_l.png"
+            pos: self.parent.pos
+            size: self.parent.size
+            fit_mode: "contain"
 
     Label:
         text: str(root.value)
         size_hint_x: None
         width: dp(40)
+        color: (0.33, 1, 0.73, 0.812)
+        font_name: "Holo"
+        bold: True
+        font_size: min(Window.width, Window.height) * 0.065
 
     Button:
-        text: "+"
         size_hint_x: None
-        width: dp(40)
+        width: root.height * 0.6
+        background_normal:''
+        background_down:''
+        background_color: (0, 0, 0, 0)
         on_release: root.increase()
+
+        Image:
+            source: "dir_buttons/arrow_r.png"
+            pos: self.parent.pos
+            size: self.parent.size
+            fit_mode: "contain"
+
+
