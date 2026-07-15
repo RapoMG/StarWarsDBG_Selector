@@ -10,6 +10,7 @@ from kivy.clock import Clock
 from kivy.lang import Builder
 from kivy.resources import resource_add_path, resource_find
 from kivy.properties import StringProperty
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import Screen, ScreenManager
 from kivy.uix.popup import Popup
 from kivy.utils import platform
@@ -17,12 +18,11 @@ from kivy.utils import platform
 from kivy.core.text import LabelBase
 from kivy.uix.textinput import TextInput
 
-from elements import Campaign
 
 BASE_DIR = Path(__file__).resolve().parent
 
 from campaign import CampaignsListWindow, CampaignDetailsWindow, NewCampaignWindow
-from cards_tab import ListScreen, CardRow
+
 
 from kivy.core.window import Window
 
@@ -56,6 +56,21 @@ LabelBase.register(name="Holo_Ex",
                    fn_regular="fonts/FirjarExpanded-Regular.ttf",
                    fn_bold="fonts/FirjarExpanded-Bold.ttf",
                    )
+class CardRenameBase(TextInput):
+    """Base for CardRename and CardRenameRight for a card row for settings popup """
+    text = StringProperty()
+
+class CardRename(CardRenameBase):
+    """Card row for settings popup """
+    # text = StringProperty()
+    pass
+
+
+class CardRenameRight(CardRenameBase):
+    """Card row for settings popup with different visual kivy output. """
+    # text = StringProperty()
+    pass
+
 
 ### Multiple Screens ###
 
@@ -362,7 +377,8 @@ class InfoPopup(Popup):
 
         self.populate_cards_list(
             self.ids.reb_re_layout,
-            reb_rein
+            reb_rein,
+            True
         )
 
         self.populate_cards_list(
@@ -372,7 +388,8 @@ class InfoPopup(Popup):
 
         self.populate_cards_list(
             self.ids.imp_re_layout,
-            imp_rein
+            imp_rein,
+            True
         )
 
         self.populate_cards_list(
@@ -390,22 +407,25 @@ class InfoPopup(Popup):
             mando_cards
         )
 
-    def populate_cards_list(self, container, deck):
+    def populate_cards_list(self, container, deck, right_side: bool = False):
         """
         Populate a container with TextInput widgets for each card in the list.
 
         :param container: The container to populate
         :param deck: List of cards to populate the container with
+        :param right_side: If True uses class with different look to populate container
         """
 
         container.clear_widgets()
 
+        widget_class = CardRenameRight if right_side else CardRename
+
         for i, card_name in enumerate(deck.cards):
-            ti = TextInput(
+            ti = widget_class(
                 text=card_name,
                 multiline=False,
                 size_hint_y=None,
-                height=40,
+                height=25,
             )
 
             ti.bind(text=partial(self.update_card_name, deck, i))
