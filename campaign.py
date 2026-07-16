@@ -388,7 +388,6 @@ class CampaignDetailsWindow(Screen):
         else:
             popup = AddCardTablePopup()
 
-            popup.action = action
             popup.faction1 = self.campaign.players[0].faction.name
             popup.faction2 = self.campaign.players[1].faction.name
 
@@ -397,6 +396,8 @@ class CampaignDetailsWindow(Screen):
                 "added cards": "Name card to add",
                 "removed bases": "Name base to remove",
             }
+
+            popup.action = hints[action]
 
             popup.ids.faction1_card.hint_text = hints.get(action, "Card name")
             popup.ids.faction2_card.hint_text = hints.get(action, "Card name")
@@ -746,25 +747,13 @@ class DeckErrorsPopup(Popup):
 class DeleteCampaignPopup(Popup):
     def __init__(self, campaign, on_confirm, **kwargs):
         super().__init__(**kwargs)
-        self.title_size = 0  # no title line
-        self.separator_height = 0  # no separator line
-        self.size_hint = (0.8, 0.4)
+        self.campaign = campaign
+        self.on_confirm = on_confirm
 
-        text="Hello there!\nAre you sure you want to delete this campaign?\nArchives may become incomplete."
+    def on_open(self):
+        #yes_btn = Button(text="Yes")
+        yes_btn = self.ids.yes_btn
+        yes_btn.bind(on_release=lambda *args: [self.on_confirm(self.campaign), self.dismiss()])
 
-        layout = BoxLayout(orientation='vertical', padding=10, spacing=10)
-        layout.add_widget(Label(text=text))
-
-        buttons = BoxLayout(spacing=10, size_hint_y=None, height=dp(50))
-
-        yes_btn = Button(text="Yes")
-        yes_btn.bind(on_release=lambda x: [on_confirm(campaign), self.dismiss()])
-
-        no_btn = Button(text="No")
+        no_btn = self.ids.no_btn
         no_btn.bind(on_release=self.dismiss)
-
-        buttons.add_widget(yes_btn)
-        buttons.add_widget(no_btn)
-        layout.add_widget(buttons)
-
-        self.content = layout
