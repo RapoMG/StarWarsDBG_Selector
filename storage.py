@@ -15,8 +15,6 @@ class Data:
         #Default players
         self.players = [Player(f"Player {_+1}") for _ in range(4)]
 
-        # toDO: save and load card rename base - changes to popup
-
         # Default factions
         self.factions = [
             # Core box

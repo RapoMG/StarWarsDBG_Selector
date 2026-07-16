@@ -56,9 +56,12 @@ LabelBase.register(name="Holo_Ex",
                    fn_regular="fonts/FirjarExpanded-Regular.ttf",
                    fn_bold="fonts/FirjarExpanded-Bold.ttf",
                    )
+
+
 class CardRenameBase(TextInput):
     """Base for CardRename and CardRenameRight for a card row for settings popup """
     text = StringProperty()
+
 
 class CardRename(CardRenameBase):
     """Card row for settings popup """

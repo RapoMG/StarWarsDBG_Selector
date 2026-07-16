@@ -9,12 +9,6 @@
 
     FloatLayout:
 
-
-#        ScrollView:
-##            pos_hint: {"center_y":.95, "center_x":0.5}
-#            do_scroll_x: True
-#            size_hint: (1, 0.9)
-
         GridLayout:
             id: errors_grid
             cols: 1
@@ -22,12 +16,12 @@
             pos_hint: {'center_x':0.5, 'center_y':0.8}
             height: self.minimum_height
             spacing: dp(4)
-
+            padding: (dp(20), 0, dp(18), 0)
 
 
         Button:
-            text: 'Return'
-            color: (0.33, 1, 0.73, 0.812)
+            text: "Acknowledge"#'Return'
+            color: (1, .1, 0, 0.812) #(0.33, 1, 0.73, 0.812)
             font_name: "Holo"
             font_size: min(Window.width, Window.height) * 0.07
 
@@ -40,7 +34,7 @@
             canvas.after:
                 # Normal
                 Color:
-                    rgba: (0.33, 1, 0.73, 0.812) if self.state == 'normal' else (0,0,0,0)
+                    rgba: (1, .1, 0, 0.812) if self.state == 'normal' else (0,0,0,0)
                 Line:
                     points:
                         (self.x, self.top,
@@ -51,7 +45,7 @@
 
                 # Down
                 Color:
-                    rgba: (0.33, 1, 0.73, 0.812) if self.state == 'down' else (0,0,0,0)
+                    rgba: (1, .1, 0, 0.812) if self.state == 'down' else (0,0,0,0)
                 Line:
                     points:
                         (self.x, self.top,
@@ -65,27 +59,14 @@
 
                 root.dismiss()
 
-#<StarterCardsRow>
-#    size_hint_y: None
-#    height: dp(40)
-#    spacing: dp(10)
-#
-#    Label:
-#        text: root.card_name
-#
-#    Button:
-#        text: "-"
-#        size_hint_x: None
-#        width: dp(40)
-#        on_release: root.decrease()
-#
-#    Label:
-#        text: str(root.value)
-#        size_hint_x: None
-#        width: dp(40)
-#
-#    Button:
-#        text: "+"
-#        size_hint_x: None
-#        width: dp(40)
-#        on_release: root.increase()
+<Errors>
+    font_size: min(Window.width, Window.height) * 0.04
+    font_name: "Holo"
+    color: (1, .1, 0, 0.812)
+    multiline: True
+
+    outline_width: 1
+    outline_color: (0, 0, 0, 0.5)
+
+    text_size: self.width - dp(20), None
+    halign: "center"

@@ -45,6 +45,10 @@ class DeleteBtn(Button):
     """Delete Campaign button declaration"""
     pass
 
+class Errors(Label):
+    """Display of decks errors"""
+    pass
+
 
 class FactionBtn(Button):
     """Select faction button declaration"""
@@ -734,7 +738,7 @@ class DeckErrorsPopup(Popup):
         for faction, deck, diff in errors:
 
             direction = "has too many" if diff > 0 else "doesn't have enough"
-            line = Label(
+            line = Errors(
                 text=f"{faction} faction {direction} {deck} cards.",
                 color="red",
                 size_hint_y=None,
