@@ -16,7 +16,7 @@
                 pos_hint: {"center_y":.9, "center_x":0.5}
                 markup: True
                 font_name: "SW"
-                font_size: min(Window.width, Window.height) * 0.035
+                font_size: min(Window.width, Window.height) * 0.04
                 outline_width: 0
 
             # Player names and factions
@@ -80,13 +80,13 @@
                 HeaderLabel: # expansion faction hidden if same as default faction (for both players)
                     id: rein1
                     text: "Expansion_Faction 1"
-                    font_size: min(Window.width, Window.height) * 0.030
+                    font_size: min(Window.width, Window.height) * 0.038
 
 
                 HeaderLabel: # expansion faction hidden if same as default faction (for both players)
                     id: rein2
                     text: "Expansion_Faction 2"
-                    font_size: min(Window.width, Window.height) * 0.030
+                    font_size: min(Window.width, Window.height) * 0.038
 
             # Warning about extraordinary alliance
             HeaderLabel:
@@ -95,7 +95,7 @@
                 opacity: 0
 
                 color: "red"
-                font_size: min(Window.width, Window.height) * 0.025
+                font_size: min(Window.width, Window.height) * 0.035
                 multiline: True
 
                 outline_width: 2
@@ -115,12 +115,6 @@
                     text: "Card name"
                     font_size: root.height * 0.022
                     font_name: "Holo_Ex"
-#                    bold: True
-#                    color: (0.33, 1, 0.68, 0.812)
-#                    size_hint_x: 1
-#                    size_hint_y: None
-#                    height: self.texture_size[1]
-
 
                 PlayerLabel:
                     text: "#"
@@ -129,10 +123,6 @@
 
                     size_hint_x: 0.35
                     width: dp(60)
-#                    bold: True
-#                    color: (0.33, 1, 0.68, 0.812)
-#                    size_hint_y: None
-#                    height: self.texture_size[1]
 
                 PlayerLabel:
                     text: "Card name"
@@ -185,7 +175,7 @@
                         # Starter cards and removed/added cards
                         HeaderLabel: # Stater cards header
                             text: "Starter cards"
-                            font_size: min(Window.width, Window.height) * 0.028
+                            #font_size: min(Window.width, Window.height) * 0.028
                             padding: 0
 
                         # Starter cards rows
@@ -218,7 +208,7 @@
 
                         HeaderLabel: # Removed cards header
                             text: "Galaxy deck removed cards"
-                            font_size: min(Window.width, Window.height) * 0.028
+                            #font_size: min(Window.width, Window.height) * 0.028
                             padding: 0
 
                         # Galaxy deck removed cards
@@ -251,7 +241,7 @@
 
                         HeaderLabel: # Added cards header
                             text: "Added cards"
-                            font_size: min(Window.width, Window.height) * 0.028
+                            #font_size: min(Window.width, Window.height) * 0.028
                             padding: 0
 
                         # Galaxy deck removed cards
@@ -285,7 +275,7 @@
 
                         HeaderLabel: # Removed bases header
                             text: "Removed Bases"
-                            font_size: min(Window.width, Window.height) * 0.028
+                            #font_size: min(Window.width, Window.height) * 0.028
                             padding: 0
 
                         # Removed Bases
@@ -301,7 +291,7 @@
                 id: force_tracker
                 rows: 1
                 cols: 7
-                size_hint: (0.8, 0.3)
+                size_hint: (0.9, 0.3)
                 pos_hint: {"center_x": 0.5}
 
                 ForceField:
@@ -373,7 +363,7 @@
         width: dp(60)
 
 <ForceField@ToggleButton>
-    size_hint: (0.1, 0.8)
+    size_hint: (0.1, 0.75)
     pos_hint: {"center_y": 0.5}
     background_normal: ""
     background_down: ""
@@ -425,7 +415,7 @@
     height: self.texture_size[1]
 
 <HeaderLabel@Label>
-    font_size: min(Window.width, Window.height) * 0.034
+    font_size: min(Window.width, Window.height) * 0.040
     font_name: "Results"
 
     color: (0.59, .27, 0.81, 0.812)

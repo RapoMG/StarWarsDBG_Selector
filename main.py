@@ -428,7 +428,7 @@ class InfoPopup(Popup):
                 text=card_name,
                 multiline=False,
                 size_hint_y=None,
-                height=25,
+                #height=25,
             )
 
             ti.bind(text=partial(self.update_card_name, deck, i))

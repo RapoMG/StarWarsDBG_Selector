@@ -50,7 +50,7 @@
             Label:
                 color: "black"
                 text: "Leaders"
-                font_size: min(Window.width, Window.height) * 0.038
+                font_size: min(Window.width, Window.height) * 0.046
                 font_name: "Results"
                 color: (0.59, .27, 0.81, 0.812)
                 pos_hint: {"center_y":.9, "center_x":0.5}
@@ -92,7 +92,7 @@
             # Reinforcements label
             Label:
                 text: "Reinforcements"
-                font_size: min(Window.width, Window.height) * 0.038
+                font_size: min(Window.width, Window.height) * 0.046
                 font_name: "Results"
                 color: (0.59, .27, 0.81, 0.812)
                 pos_hint: {"center_y":.9, "center_x":0.5}
@@ -148,13 +148,15 @@
                 opacity: 0
                 on_release:
                     root.start_campaign()
-                    app.root.current = "campaign_details"
+                    root.clean_fields()
+
 
         # Previous window button
         Back:
             text: "That is unacceptable!"
             on_release:
                 root.clean_fields()
+                root.clean_app()
                 app.root.current = "campaigns_list"
 
 

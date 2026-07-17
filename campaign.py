@@ -45,6 +45,7 @@ class DeleteBtn(Button):
     """Delete Campaign button declaration"""
     pass
 
+
 class Errors(Label):
     """Display of decks errors"""
     pass
@@ -117,7 +118,7 @@ def faction_name(faction_name: str) -> str:
 
 
     image = {
-        "Rebel": "images/fact_buttons/reb_on.png",
+        "Rebelion": "images/fact_buttons/reb_on.png",
         "Empire": "images/fact_buttons/emp_on.png",
         "Republic": "images/fact_buttons/rep_on.png",
         "Separatists": "images/fact_buttons/sep_on.png",
@@ -208,7 +209,7 @@ class CampaignsListWindow(Screen):
 
 
         image = {
-            "Rebel": "images/fact_buttons/reb_on.png",
+            "Rebelion": "images/fact_buttons/reb_on.png",
             "Empire": "images/fact_buttons/emp_on.png",
             "Republic": "images/fact_buttons/rep_on.png",
             "Separatists": "images/fact_buttons/sep_on.png",
@@ -217,6 +218,7 @@ class CampaignsListWindow(Screen):
 
         # Placeholder implementation - replace with actual faction image paths
         return image.get(faction_name, "images/icon.png")
+
 
 class CampaignDetailsWindow(Screen):
     """
@@ -649,6 +651,10 @@ class NewCampaignWindow(Screen):
     def start_campaign(self):
         """Draws the first player and creates a new campaign instance, then saves it to the file."""
 
+        # check if button is "active" (visible)
+        if self.ids.start.opacity == 0:
+            return
+
         app = App.get_running_app()
         pl = self.players
 
@@ -664,13 +670,22 @@ class NewCampaignWindow(Screen):
 
         app.prepare_working_campaign(new)
 
+        self.clean_fields()
+
+        # move to Campaign details screen
+        app.root.current = "campaign_details"
+
     def clean_fields(self):
         """Restores screen to entry view, and removes working instances of the game elements."""
         self.ids.faction1.source = "nav_buttons/quest.png"
         self.ids.faction2.source = "nav_buttons/quest.png"
         self.ids.exp_faction1.source = "nav_buttons/quest.png"
         self.ids.exp_faction2.source = "nav_buttons/quest.png"
+        self.ids.start.opacity = 0
 
+    @staticmethod
+    def clean_app():
+        """Clears the current app instance."""
         App.get_running_app().clear_working_elements()
 
 

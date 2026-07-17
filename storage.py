@@ -18,7 +18,7 @@ class Data:
         # Default factions
         self.factions = [
             # Core box
-            Faction("Rebel", "Core"),
+            Faction("Rebelion", "Core"),
             Faction("Empire","Core",True),
 
             # Clone Wars box
@@ -56,6 +56,7 @@ class Data:
 
         # file path
         json_file = os.path.join(data_dir, "settings.json")
+        print(json_file)
         return json_file
 
     def load_file(self) -> None:

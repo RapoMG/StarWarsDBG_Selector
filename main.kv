@@ -13,7 +13,6 @@
 #:include windows/campaign/campaigns_list.kv
 #:include windows/campaign/campaign_details.kv
 #:include windows/campaign/new_campaign.kv
-#:include list_screen.kv
 
 #:include windows/campaign/popup/select_faction_popup.kv
 #:include windows/campaign/popup/add_card_table.kv
@@ -118,11 +117,11 @@ ScreenManager:
     background_down: 'nav_buttons/bubble_left_press.png'
 
     pos_hint :{'center_x':0.5, 'center_y':0.1}
-    size_hint: .55, .14
-    size_hint_y: None # allows dynamic height and correct scrolling
+    size_hint: .55, .16
 
     halign: "center"
     valign: "middle"
+    height: self.texture_size[1]
 
     text_size: self.width - dp(20), None
     padding: dp(10), dp(10)

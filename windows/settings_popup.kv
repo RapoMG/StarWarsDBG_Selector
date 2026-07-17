@@ -31,7 +31,7 @@
                         text: "_Leaders names_"
                         font_name: "Holo"
                         color: (0.33, 1, 0.73, 0.812)
-                        font_size: min(Window.width, Window.height) * 0.07
+                        font_size: min(Window.width, Window.height) * 0.075
                         bold: True
 
                     Player_name:
@@ -98,7 +98,7 @@
                             text: "_Assign code names_"
                             font_name: "Holo"
                             color: (0.33, 1, 0.73, 0.812)
-                            font_size: min(Window.width, Window.height) * 0.07
+                            font_size: min(Window.width, Window.height) * 0.075
                             bold: True
 
                         SectionLabel:
@@ -109,11 +109,11 @@
 
                         SectionLabel:
                             text: "Reinforcements"
-                            font_size: min(Window.width, Window.height) * 0.045
+                            font_size: min(Window.width, Window.height) * 0.055
 
                         CardGrid:
                             id: reb_re_layout
-                            padding: [self.width * 0.45, 0, self.width * 0.15, 0]
+                            padding: [self.width * 0.30, 0, self.width * 0.15, 0]
 
                         SectionLabel:
                             text: "Empire"
@@ -123,11 +123,11 @@
 
                         SectionLabel:
                             text: "Reinforcements"
-                            font_size: min(Window.width, Window.height) * 0.045
+                            font_size: min(Window.width, Window.height) * 0.055
 
                         CardGrid:
                             id: imp_re_layout
-                            padding: [self.width * 0.45, 0, self.width * 0.15, 0]
+                            padding: [self.width * 0.30, 0, self.width * 0.15, 0]
 
                         SectionLabel:
                             text: "Republic"
@@ -213,7 +213,7 @@
 <SectionLabel@Label>
     font_name: "Holo"
     color: (0.33, 1, 0.73, 0.812)
-    font_size: min(Window.width, Window.height) * 0.055
+    font_size: min(Window.width, Window.height) * 0.065
     bold: True
 
     size_hint_y: None
@@ -224,15 +224,17 @@
     size_hint_y: None
     height: self.minimum_height
     spacing: dp(15)
-    padding: [self.width * 0.15, 0, self.width * 0.45, 0]
+    padding: [self.width * 0.15, 0, self.width * 0.30, 0]
 
 <CardRenameBase>
-    font_size: root.height * 0.55
+    font_size: root.height * 0.60
     font_name: "Holo_Ex"
     halign: "left"
-    valign: "bottom"
+    valign: "middle"
     multiline: False
 
+    size_hint_y: None
+    height: root.minimum_height
     foreground_color: (0.33, 1, 0.73, 0.812)
 
     border_margin: (0,4,0,4)
