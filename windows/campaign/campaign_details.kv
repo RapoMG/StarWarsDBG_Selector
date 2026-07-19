@@ -107,7 +107,7 @@
             # Starter cards header with columns
             GridLayout:
                 rows: 1
-                cols: 4
+                cols: 5
                 size_hint: (1, 0.08)
 
                 # header
@@ -145,7 +145,7 @@
                 # All cards container
                 GridLayout:
                     cols: 1
-                    rows: 4
+                    rows: 5
                     size_hint_y: None # allows dynamic height and correct scrolling
                     height: self.minimum_height
                     spacing: dp(20)
@@ -285,13 +285,48 @@
                             size_hint_y: None # allows dynamic height and correct scrolling
                             height: self.minimum_height
 
+#########################################################################
+                    # Starting bases container
+                    EditableArea:
+                        id: starting_bases_area
+                        owner: root
+                        action: "starting base"
+
+                        canvas.before:
+                            Color:
+                                rgba: (0, 1, 0.4, 0.812) if self.editable else (0, 0, 0, 0)
+                            Line:
+                                rounded_rectangle:
+                                    self.x, self.y, self.width, self.height, 10
+                                width: 3
+
+                        canvas:
+                            Color:
+                                rgba: (1, 1, 1, 0.612) if self.editable else (0, 0, 0, 0)
+                            Line:
+                                rounded_rectangle:
+                                    self.x, self.y, self.width, self.height, 10
+                                width: 1
+
+                        HeaderLabel: # Starting bases header
+                            text: "Starting Bases"
+                            #font_size: min(Window.width, Window.height) * 0.028
+                            padding: 0
+
+                        # Starting Bases
+                        GridLayout:
+                            id: starting_bases
+                            cols: 1 # rows are dynamic with length of starter cards list
+                            size_hint_y: None # allows dynamic height and correct scrolling
+                            height: self.minimum_height
+
 
             # Force tracker
             GridLayout:
                 id: force_tracker
                 rows: 1
                 cols: 7
-                size_hint: (0.9, 0.3)
+                size_hint: (0.9, 0.28)
                 pos_hint: {"center_x": 0.5}
 
                 ForceField:

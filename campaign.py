@@ -272,6 +272,9 @@ class CampaignDetailsWindow(Screen):
         # Removed bases
         self.populate_card_rows(self.ids.removed_bases, self.campaign.p1_removed_bases, self.campaign.p2_removed_bases)
 
+        # Starting bases
+        self.populate_card_rows(self.ids.starting_bases, self.campaign.p1_starter_base, self.campaign.p2_starter_base)
+
         # Set extra resource for the second player
         self.resource(app) # move that to campaign creation stage
 
@@ -350,6 +353,7 @@ class CampaignDetailsWindow(Screen):
         self.ids.removed_cards_area.editable = edit
         self.ids.added_cards_area.editable = edit
         self.ids.removed_bases_area.editable = edit
+        self.ids.starting_bases_area.editable = edit
 
         # Force fields
         self.ids.p1_resource.disabled = disabled
@@ -401,6 +405,7 @@ class CampaignDetailsWindow(Screen):
                 "removed cards": "Name card to remove",
                 "added cards": "Name card to add",
                 "removed bases": "Name base to remove",
+                "starting base": "The winner’s final base",
             }
 
             popup.action = hints[action]
@@ -446,6 +451,12 @@ class CampaignDetailsWindow(Screen):
                 self.ids.removed_bases,
                 "Name base to remove",
             ),
+            "starting base":(
+                self.campaign.p1_starter_base,
+                self.campaign.p2_starter_base,
+                self.ids.starting_bases,
+                "The winner’s final base"
+            )
         }
 
         selected_lists = lists_by_action.get(action)
@@ -454,8 +465,19 @@ class CampaignDetailsWindow(Screen):
 
         p1_cards, p2_cards, container, hint = selected_lists
 
-        self.add_card_copy(p1_cards, popup.ids.faction1_card.text)
-        self.add_card_copy(p2_cards, popup.ids.faction2_card.text)
+        # New entries from popup
+        # replace the Last base
+        if action == "starting base":
+            # Both fields filled
+            if popup.ids.faction1_card.text != "" and popup.ids.faction2_card.text !="":
+                return
+            self.campaign.next_starter_base(0, popup.ids.faction1_card.text)
+            self.campaign.next_starter_base(1, popup.ids.faction2_card.text)
+
+        # Add cards to dictionaries
+        else:
+            self.add_card_copy(p1_cards, popup.ids.faction1_card.text)
+            self.add_card_copy(p2_cards, popup.ids.faction2_card.text)
 
         self.populate_card_rows(container, p1_cards, p2_cards)
 
@@ -470,7 +492,7 @@ class CampaignDetailsWindow(Screen):
     @staticmethod
     def populate_card_rows(container_id, p1_column: dict[str, int], p2_column: dict[str, int]):
         """
-        Populates the starter decks rows with card names and quantities for both players.
+        Populates the card decks rows with card names and quantities for both players.
         :param container_id: id of layout container displaying cards
         :param p1_column: Dictionary of card names and quantities for player 1
         :param p2_column: Dictionary of card names and quantities for player 2
@@ -480,7 +502,7 @@ class CampaignDetailsWindow(Screen):
         # Starter decks rows number
         # container_id.rows = max(len(p1_column), len(p2_column))
 
-        # Starter decks rows
+        # Card decks rows
         for p1_card, p2_card in zip_longest(p1_column, p2_column, fillvalue=""):
             row = StarterDeckRow(
                 p1_card_name=p1_card,
@@ -753,8 +775,9 @@ class DeckErrorsPopup(Popup):
         for faction, deck, diff in errors:
 
             direction = "has too many" if diff > 0 else "doesn't have enough"
+            # diff == 0 marks both starting bases after first game
             line = Errors(
-                text=f"{faction} faction {direction} {deck} cards.",
+                text=f"{faction} faction {direction} {deck} cards." if diff != 0 else "Set starting base for the winner",
                 color="red",
                 size_hint_y=None,
                 height=40,

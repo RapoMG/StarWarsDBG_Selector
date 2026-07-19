@@ -159,6 +159,9 @@ class Campaign:
         self.p1_removed_bases: Dict[str, int] = {}
         self.p2_removed_bases: Dict[str, int] = {}
 
+        self.p1_starter_base: Dict[str, int] = {"First base": 1}
+        self.p2_starter_base: Dict[str, int] = {"First base": 1}
+
         # VALIDATOR Var
         self.even_cards_nbr: bool = True
 
@@ -255,7 +258,9 @@ class Campaign:
 
             # Starter validation
             starter_val = self.check_starter_nbr(p+1)
+            # Galaxy validation
             galaxy_val = self.check_galaxy_nbr(p+1)
+
             if starter_val == 0 and galaxy_val == 0:
                 continue
 
@@ -266,6 +271,11 @@ class Campaign:
 
             if galaxy_val != 0:
                 errors.append((name, "Galaxy", galaxy_val))
+
+        # Check if the winner base added
+        if self.p1_starter_base ==  self.p2_starter_base:
+            # no text 0 marks starting base not named after 1st game
+            errors.append(("", "", 0))
 
         return errors #if len(errors) != 0 else None
 
@@ -298,6 +308,9 @@ class Campaign:
             "p1_removed_bases":self.p1_removed_bases,
             "p2_removed_bases":self.p2_removed_bases,
 
+            "p1_starter_base":self.p1_starter_base,
+            "p2_starter_base":self.p2_starter_base,
+
         }
     @classmethod
     def from_dict(cls, data: dict[str, Any]):
@@ -317,6 +330,34 @@ class Campaign:
         campaign.p1_removed_bases=data["p1_removed_bases"]
         campaign.p2_removed_bases=data["p2_removed_bases"]
 
+        campaign.p1_starter_base = data["p1_starter_base"]
+        campaign.p2_starter_base = data["p2_starter_base"]
+
         return campaign
 
+    def next_starter_base(self, player_index: int, base_name: str) -> None:
+        """
+        Sets base name to player_index and removes base name for opposing player
+        :param player_index: index of the winning player
+        :param base_name: base name starting next game
+        """
 
+        # Skip for empty name
+        if base_name == "":
+            return
+
+        #other = 0 if player_index == 0 else 1
+
+        self.p1_starter_base.clear()
+        #self.starter_base[player_index].update({base_name: 1})
+
+        self.p2_starter_base.clear()
+        #self.starter_base[other].update({"Player selection":1})
+
+        if player_index == 0:
+            self.p1_starter_base.update({base_name: 1})
+            self.p2_starter_base.update({"Player selection":1})
+
+        else:
+            self.p2_starter_base.update({base_name: 1})
+            self.p1_starter_base.update({"Player selection":1})
