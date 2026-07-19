@@ -1,12 +1,29 @@
 [font=fonts/StarJedi-DGRW.ttf] Star Wars DBG Faction Selector[/font]
 
-Unofficial companion app for *Star Wars: The Deckbuilding Game*.
+Unofficial companion app for [i]Star Wars: The Deckbuilding Game[/i].
 
-This is a simple faction drawing app. The user selects:
-- number of players, from 2 to 4
-- factions to include in the draw
+This app comprises [b]two main features[/b].
 
-The app then displays the result for each player and appoints the first player.
+[b]First one[/b] is a simple faction drawing function. The user selects:
+
+• number of the players, from 2 to 4,
+• factions to include in the draw.
+
+The user selects entire sets or individual factions, and then indicates whether a neutral deck
+should also be drawn at random (enabled by default). After this, the user will find out
+which player is playing which faction and who starts the game. 
+
+[b]The second mode[/b] is Campaign Companion, in which the user selects the factions the players will use to play the campaign,
+as well as their reinforcement decks. The app allows these to be combined in any way
+(e.g. Separatists with Rebel reinforcements), but the user will be notified if such a combination
+deviates from the rules of the game.
+
+You can track the progress of the campaign by adding and removing cards from decks and noting destroyed bases
+and Force levels between games. The app ensures that the starting decks and the Galaxy deck
+contain the correct number of cards, and the user can view notifications detailing which discrepancies
+must be corrected before proceeding to the next game.
+
+In the app’s settings, you’ll find the option to change player names and starting cards for each faction.
 
 Developed by [b]Krzysztof Janiak[/b].
 
