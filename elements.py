@@ -156,6 +156,9 @@ class Campaign:
         self.p1_added_cards: Dict[str, int] = {}
         self.p2_added_cards: Dict[str, int] = {}
 
+        self.p1_missions_completed: Dict[str, int] = {}
+        self.p2_missions_completed: Dict[str, int] = {}
+
         self.p1_removed_bases: Dict[str, int] = {}
         self.p2_removed_bases: Dict[str, int] = {}
 
@@ -305,6 +308,9 @@ class Campaign:
             "p1_added_cards": self.p1_added_cards,
             "p2_added_cards": self.p2_added_cards,
 
+            "p1_missions_completed":self.p1_missions_completed,
+            "p2_missions_completed":self.p2_missions_completed,
+
             "p1_removed_bases":self.p1_removed_bases,
             "p2_removed_bases":self.p2_removed_bases,
 
@@ -326,6 +332,9 @@ class Campaign:
 
         campaign.p1_added_cards=data["p1_added_cards"]
         campaign.p2_added_cards=data["p2_added_cards"]
+
+        campaign.p1_missions_completed=data["p1_missions_completed"]
+        campaign.p2_missions_completed=data["p2_missions_completed"]
 
         campaign.p1_removed_bases=data["p1_removed_bases"]
         campaign.p2_removed_bases=data["p2_removed_bases"]

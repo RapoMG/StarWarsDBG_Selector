@@ -145,7 +145,7 @@
                 # All cards container
                 GridLayout:
                     cols: 1
-                    rows: 5
+                    rows: 6
                     size_hint_y: None # allows dynamic height and correct scrolling
                     height: self.minimum_height
                     spacing: dp(20)
@@ -251,6 +251,40 @@
                             size_hint_y: None # allows dynamic height and correct scrolling
                             height: self.minimum_height
 
+                    # Missions completed container
+                    EditableArea:
+                        id: missions_area
+                        owner: root
+                        action: "removed missions"
+
+                        canvas.before:
+                            Color:
+                                rgba: (0, 1, 0.4, 0.812) if self.editable else (0, 0, 0, 0)
+                            Line:
+                                rounded_rectangle:
+                                    self.x, self.y, self.width, self.height, 10
+                                width: 3
+
+                        canvas:
+                            Color:
+                                rgba: (1, 1, 1, 0.612) if self.editable else (0, 0, 0, 0)
+                            Line:
+                                rounded_rectangle:
+                                    self.x, self.y, self.width, self.height, 10
+                                width: 1
+
+                        HeaderLabel: # Removed bases header
+                            text: "Missions completed"
+                            #font_size: min(Window.width, Window.height) * 0.028
+                            padding: 0
+
+                        # Removed missions
+                        GridLayout:
+                            id: removed_missions
+                            cols: 1 # rows are dynamic with length of starter cards list
+                            size_hint_y: None # allows dynamic height and correct scrolling
+                            height: self.minimum_height
+
                     # Removed bases container
                     EditableArea:
                         id: removed_bases_area
@@ -285,7 +319,6 @@
                             size_hint_y: None # allows dynamic height and correct scrolling
                             height: self.minimum_height
 
-#########################################################################
                     # Starting bases container
                     EditableArea:
                         id: starting_bases_area

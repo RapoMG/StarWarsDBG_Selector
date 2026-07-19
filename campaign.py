@@ -269,6 +269,9 @@ class CampaignDetailsWindow(Screen):
         # Added galaxy cards
         self.populate_card_rows(self.ids.added_cards, self.campaign.p1_added_cards, self.campaign.p2_added_cards)
 
+        # Missions cards
+        self.populate_card_rows(self.ids.removed_missions, self.campaign.p1_missions_completed, self.campaign.p2_missions_completed)
+
         # Removed bases
         self.populate_card_rows(self.ids.removed_bases, self.campaign.p1_removed_bases, self.campaign.p2_removed_bases)
 
@@ -352,6 +355,7 @@ class CampaignDetailsWindow(Screen):
         self.ids.starter_cards_area.editable = edit
         self.ids.removed_cards_area.editable = edit
         self.ids.added_cards_area.editable = edit
+        self.ids.missions_area.editable = edit
         self.ids.removed_bases_area.editable = edit
         self.ids.starting_bases_area.editable = edit
 
@@ -404,6 +408,7 @@ class CampaignDetailsWindow(Screen):
             hints = {
                 "removed cards": "Name card to remove",
                 "added cards": "Name card to add",
+                "removed missions": "Name completed mission",
                 "removed bases": "Name base to remove",
                 "starting base": "The winner’s final base",
             }
@@ -444,6 +449,12 @@ class CampaignDetailsWindow(Screen):
                 self.campaign.p2_added_cards,
                 self.ids.added_cards,
                 "Name card to add",
+            ),
+            "removed missions": (
+                self.campaign.p1_missions_completed,
+                self.campaign.p2_missions_completed,
+                self.ids.removed_missions,
+                "Name completed mission",
             ),
             "removed bases": (
                 self.campaign.p1_removed_bases,
