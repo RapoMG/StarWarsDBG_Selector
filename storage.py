@@ -56,7 +56,6 @@ class Data:
 
         # file path
         json_file = os.path.join(data_dir, "settings.json")
-        print(json_file)
         return json_file
 
     def load_file(self) -> None:
@@ -70,10 +69,8 @@ class Data:
                 # open file
                 with open(json_file, "r", encoding="utf-8") as f:
                     data = json.load(f)
-                    # rebuild this structure for campaign mode
-                    # Set players
-                    print(f"Loading data from file:\n {data}")
 
+                    # Set players
                     self.dict_to_data(data)
 
             except json.decoder.JSONDecodeError:
@@ -92,8 +89,6 @@ class Data:
         with open(self.file_path(), "w", encoding="utf-8") as f:
             data = self.data_to_dict()
             json.dump(data, f,indent=4, ensure_ascii=False)
-
-            print(self.file_path())
 
     def get_players(self):
         # return players

@@ -43,7 +43,7 @@ In the app’s settings, you’ll find the option to change player names and sta
 ## Requirements
 
 ### For Users
-- **Android:** Android 5.0 or higher (via APK)
+- **Android:** Android 7.1 or higher (via APK)
 - **Windows/Linux:** No extra requirements if using a compiled executable.
 
 ### For Developers (Running from Source)

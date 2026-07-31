@@ -1,15 +1,12 @@
 from copy import deepcopy
 from itertools import zip_longest
 
-from kivy.uix.image import Image
-from kivy.core.window import Window
 from kivy.properties import StringProperty, NumericProperty, BooleanProperty, ObjectProperty
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.button import Button
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.relativelayout import RelativeLayout
 
 from kivy.uix.screenmanager import Screen
 from kivy.uix.popup import Popup
@@ -32,11 +29,9 @@ class CampaignButton(ButtonBehavior, FloatLayout):
 
     p1_name = StringProperty("")
     p1_faction_image = StringProperty("")
-
     p1_reinforcements = StringProperty("")
 
     p2_name = StringProperty("")
-    #p2_faction = StringProperty("")
     p2_faction_image = StringProperty("")
     p2_reinforcements = StringProperty("")
 
@@ -246,13 +241,11 @@ class CampaignDetailsWindow(Screen):
 
         # Player 1 headers
         self.ids.player1.text = self.campaign.players[0].name
-        #self.ids.faction1.text = self.campaign.players[0].faction.name
         self.ids.faction1.source = faction_name(self.campaign.players[0].faction.name)
         self.ids.rein1.text = self.campaign.players[0].reinforcements.faction_name
 
         # Player 2 headers
         self.ids.player2.text = self.campaign.players[1].name
-        #self.ids.faction2.text = self.campaign.players[1].faction.name
         self.ids.faction2.source = faction_name(self.campaign.players[1].faction.name)
         self.ids.rein2.text = self.campaign.players[1].reinforcements.faction_name
 
@@ -294,12 +287,9 @@ class CampaignDetailsWindow(Screen):
         elif not self.editable:
             # switch to edit mode
             self.edit_mode(True)
-            print("primary action made it editable")
 
         # edit mode but with errors
         elif self.has_errors(): # assigns errors to dict and return bool
-            #self.show_errors_popup() # calls popup list
-            print("primary action see it has errors")
             popup = DeckErrorsPopup()
 
             popup.open()
@@ -330,17 +320,15 @@ class CampaignDetailsWindow(Screen):
         """Text and color for the main button depending on the current screen mode (edit | errors | display)."""
         # is in display mode
         if not self.editable:
-            #print("display text")
             self.main_button_text = "Resolve the Battle"
             self.ids.main_button.color = "yellow"
 
         # edit mode but with errors
         elif self.has_errors():
-            #print("errors text")
             self.main_button_text = "Show decks errors"
             self.ids.main_button.color = "red"
+
         else:
-            #print("confirm text")
             self.main_button_text = "Confirm Reinforcements"
             self.ids.main_button.color = "green"
 
@@ -380,16 +368,12 @@ class CampaignDetailsWindow(Screen):
         self.ids.p1_resource.state = "normal" if pl[0].first else "down"
         self.ids.p2_resource.state = "normal" if pl[1].first else "down"
 
-        print(F"p1: {pl[0].first}, p2: {pl[1].first}")
-
     def schedule_button_update(self, *args):
         Clock.schedule_once(self.update_main_button, 0)
 
     def popup_selector(self, action: str, instance=None):
 
         if action == "starter cards":
-            print("starter cards")
-
             popup = StarterCardsPopup()
             popup.faction1 = self.campaign.players[0].faction.name
             popup.faction2 = self.campaign.players[1].faction.name
@@ -510,9 +494,6 @@ class CampaignDetailsWindow(Screen):
         """
         container_id.clear_widgets()
 
-        # Starter decks rows number
-        # container_id.rows = max(len(p1_column), len(p2_column))
-
         # Card decks rows
         for p1_card, p2_card in zip_longest(p1_column, p2_column, fillvalue=""):
             row = StarterDeckRow(
@@ -571,7 +552,6 @@ class NewCampaignWindow(Screen):
 
         # Factions
         if self.players[0].faction is not None:
-            # self.ids.faction1.text = self.players[0].faction.name
             self.ids.faction1.source = faction_name(self.players[0].faction.name)
         if self.players[1].faction is not None:
             self.ids.faction2.source = faction_name(self.players[1].faction.name)
@@ -777,7 +757,6 @@ class DeckErrorsPopup(Popup):
     def on_open(self):
         app = App.get_running_app()
         errors = app.working_campaign.campaign_valid()
-        print(f"in popup:{errors}")
 
         errors_grid = self.ids.errors_grid
 
@@ -786,7 +765,6 @@ class DeckErrorsPopup(Popup):
         for faction, deck, diff in errors:
 
             direction = "has too many" if diff > 0 else "doesn't have enough"
-            # diff == 0 marks both starting bases after first game
             line = Errors(
                 text=f"{faction} faction {direction} {deck} cards." if diff != 0 else "Set starting base for the winner",
                 color="red",
@@ -804,7 +782,6 @@ class DeleteCampaignPopup(Popup):
         self.on_confirm = on_confirm
 
     def on_open(self):
-        #yes_btn = Button(text="Yes")
         yes_btn = self.ids.yes_btn
         yes_btn.bind(on_release=lambda *args: [self.on_confirm(self.campaign), self.dismiss()])
 
