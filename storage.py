@@ -18,7 +18,7 @@ class Data:
         # Default factions
         self.factions = [
             # Core box
-            Faction("Rebelion", "Core"),
+            Faction("Rebellion", "Core"),
             Faction("Empire","Core",True),
 
             # Clone Wars box

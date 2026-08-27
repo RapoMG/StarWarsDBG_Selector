@@ -54,8 +54,8 @@ class Reinforcements:
     """
     def __init__(self, faction_name: str):
         self.faction_name = faction_name
-        self.cards = ["Droid", "Raider", "Capital ship", "Fighter A", "Fighter B"]
-        self.default_cards = ("Droid", "Raider", "Capital ship", "Fighter A", "Fighter B")
+        self.cards = ["Droid", "Raider", "Capital ship", "Transport", "Fighter"]
+        self.default_cards = ("Droid", "Raider", "Capital ship", "Transport", "Fighter")
         self.max_quantity = (2,2,2,2,2)
 
     def rename_card(self, index: int, name: str):

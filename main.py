@@ -60,7 +60,8 @@ LabelBase.register(name="Holo_Ex",
 
 class CardRenameBase(TextInput):
     """Base for CardRename and CardRenameRight for a card row for settings popup """
-    text = StringProperty()
+    #text = StringProperty()
+    pass
 
 
 class CardRename(CardRenameBase):

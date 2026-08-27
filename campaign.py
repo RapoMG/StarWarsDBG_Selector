@@ -113,7 +113,7 @@ def faction_name(faction_name: str) -> str:
 
 
     image = {
-        "Rebelion": "images/fact_buttons/reb_on.png",
+        "Rebellion": "images/fact_buttons/reb_on.png",
         "Empire": "images/fact_buttons/emp_on.png",
         "Republic": "images/fact_buttons/rep_on.png",
         "Separatists": "images/fact_buttons/sep_on.png",
@@ -204,7 +204,7 @@ class CampaignsListWindow(Screen):
 
 
         image = {
-            "Rebelion": "images/fact_buttons/reb_on.png",
+            "Rebellion": "images/fact_buttons/reb_on.png",
             "Empire": "images/fact_buttons/emp_on.png",
             "Republic": "images/fact_buttons/rep_on.png",
             "Separatists": "images/fact_buttons/sep_on.png",
@@ -520,7 +520,11 @@ class CampaignDetailsWindow(Screen):
         self.populate_card_rows(self.ids.added_cards, {}, {})
         self.populate_card_rows(self.ids.removed_bases, {}, {})
 
+        # turn off edition
         self.edit_mode(False)
+
+        # set button display to default
+        self.update_main_button()
 
         App.get_running_app().clear_working_elements()
 
@@ -774,6 +778,14 @@ class DeckErrorsPopup(Popup):
 
             errors_grid.add_widget(line)
 
+            # Add empty line to separate errors if there are multiple errors (text wrapping)
+            if len(errors)>1:
+                empty_line = Errors(
+                    text=f" ",
+                    size_hint_y=None,
+                    height=40,
+                )
+                errors_grid.add_widget(empty_line)
 
 class DeleteCampaignPopup(Popup):
     def __init__(self, campaign, on_confirm, **kwargs):
