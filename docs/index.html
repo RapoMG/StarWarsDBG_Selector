@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+
+<html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SW: DBG – Campaign Companion</title>
+
+<meta
+    name="description"
+    content="An unofficial companion app for Star Wars: Deckbuilding Game. Set up games, randomly assign factions, and track four-game campaigns."
+>
+
+<style>
+    :root {
+        --background: #101318;
+        --surface: #181d24;
+        --surface-light: #202630;
+        --text: #f1f3f5;
+        --muted: #aeb5bf;
+        --red: #c9343b;
+        --red-dark: #8f252b;
+        --blue: #3274b9;
+        --blue-dark: #245486;
+        --border: #303741;
+        --max-width: 1000px;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        margin: 0;
+        background:
+            radial-gradient(
+                circle at 15% 10%,
+                rgba(201, 52, 59, 0.12),
+                transparent 35%
+            ),
+            radial-gradient(
+                circle at 85% 15%,
+                rgba(50, 116, 185, 0.12),
+                transparent 35%
+            ),
+            var(--background);
+        color: var(--text);
+        font-family:
+            -apple-system,
+            BlinkMacSystemFont,
+            "Segoe UI",
+            Roboto,
+            Helvetica,
+            Arial,
+            sans-serif;
+        line-height: 1.6;
+    }
+
+    a {
+        color: inherit;
+    }
+
+    .container {
+        width: min(100% - 40px, var(--max-width));
+        margin: 0 auto;
+    }
+
+    /* Header */
+
+    header {
+        border-bottom: 1px solid var(--border);
+        background: rgba(16, 19, 24, 0.92);
+    }
+
+    .header-inner {
+        min-height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    .brand {
+        text-decoration: none;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        font-size: 1.05rem;
+    }
+
+    .brand span {
+        color: var(--blue);
+    }
+
+    nav {
+        display: flex;
+        gap: 20px;
+    }
+
+    nav a {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+
+    nav a:hover {
+        color: var(--text);
+    }
+
+    /* Hero */
+
+    .hero {
+        padding: 90px 0 80px;
+        text-align: center;
+    }
+
+    .hero-badge {
+        display: inline-block;
+        margin-bottom: 22px;
+        padding: 6px 14px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        color: var(--muted);
+        font-size: 0.82rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+
+    h1 {
+        margin: 0;
+        font-size: clamp(2.5rem, 7vw, 4.6rem);
+        line-height: 1.05;
+        letter-spacing: -0.04em;
+    }
+
+    .hero-title-blue {
+        color: var(--blue);
+    }
+
+    .hero-title-red {
+        color: var(--red);
+    }
+
+    .hero-subtitle {
+        max-width: 700px;
+        margin: 24px auto 0;
+        color: var(--muted);
+        font-size: clamp(1.05rem, 2.5vw, 1.3rem);
+    }
+
+    .hero-note {
+        max-width: 620px;
+        margin: 22px auto 0;
+        color: #858d98;
+        font-size: 0.9rem;
+    }
+
+    /* Sections */
+
+    section {
+        padding: 70px 0;
+    }
+
+    .section-heading {
+        max-width: 700px;
+        margin: 0 auto 40px;
+        text-align: center;
+    }
+
+    .section-heading h2 {
+        margin: 0 0 12px;
+        font-size: clamp(1.8rem, 4vw, 2.5rem);
+    }
+
+    .section-heading p {
+        margin: 0;
+        color: var(--muted);
+    }
+
+    /* Mode cards */
+
+    .modes {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px;
+    }
+
+    .mode-card {
+        padding: 32px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+    }
+
+    .mode-card.single {
+        border-top: 3px solid var(--blue);
+    }
+
+    .mode-card.campaign {
+        border-top: 3px solid var(--red);
+    }
+
+    .mode-label {
+        margin-bottom: 10px;
+        color: var(--muted);
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .mode-card h3 {
+        margin: 0 0 14px;
+        font-size: 1.6rem;
+    }
+
+    .mode-card p {
+        margin: 0 0 20px;
+        color: var(--muted);
+    }
+
+    .mode-card ul {
+        margin: 0;
+        padding-left: 20px;
+    }
+
+    .mode-card li {
+        margin: 8px 0;
+    }
+
+    /* Features */
+
+    .features {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px 30px;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .feature {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        padding: 13px 0;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .feature-marker {
+        flex: 0 0 auto;
+        width: 8px;
+        height: 8px;
+        margin-top: 9px;
+        border-radius: 50%;
+        background: var(--blue);
+    }
+
+    .feature:nth-child(even) .feature-marker {
+        background: var(--red);
+    }
+
+    /* Privacy */
+
+    .privacy-box {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 30px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        text-align: center;
+    }
+
+    .privacy-box p {
+        margin: 0 0 18px;
+        color: var(--muted);
+    }
+
+    .button {
+        display: inline-block;
+        padding: 10px 18px;
+        border-radius: 8px;
+        background: var(--surface-light);
+        border: 1px solid var(--border);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .button:hover {
+        border-color: var(--blue);
+    }
+
+    /* Disclaimer */
+
+    .disclaimer {
+        max-width: 760px;
+        margin: 0 auto;
+        color: #858d98;
+        font-size: 0.85rem;
+        text-align: center;
+    }
+
+    /* Footer */
+
+    footer {
+        margin-top: 30px;
+        padding: 35px 0;
+        border-top: 1px solid var(--border);
+        color: #858d98;
+        font-size: 0.85rem;
+    }
+
+    .footer-inner {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .footer-links {
+        display: flex;
+        gap: 18px;
+    }
+
+    .footer-links a {
+        color: var(--muted);
+        text-decoration: none;
+    }
+
+    .footer-links a:hover {
+        color: var(--text);
+    }
+
+    /* Mobile */
+
+    @media (max-width: 700px) {
+        .container {
+            width: min(100% - 28px, var(--max-width));
+        }
+
+        .header-inner {
+            min-height: 64px;
+        }
+
+        nav {
+            gap: 12px;
+        }
+
+        nav a {
+            font-size: 0.82rem;
+        }
+
+        .hero {
+            padding: 65px 0 55px;
+        }
+
+        section {
+            padding: 50px 0;
+        }
+
+        .modes,
+        .features {
+            grid-template-columns: 1fr;
+        }
+
+        .mode-card {
+            padding: 25px;
+        }
+
+        .footer-inner {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+</style>
+
+</head>
+
+<body>
+
+<header> <div class="container header-inner"> <a class="brand" href="./"> <span>SW: DBG</span> – Campaign Companion </a>
+
+    <nav>
+        <a href="#features">Features</a>
+        <a href="policy.html">Privacy</a>
+    </nav>
+</div>
+
+</header>
+
+<main>
+
+<!-- Hero -->
+
+<section class="hero">
+    <div class="container">
+
+        <div class="hero-badge">
+            Unofficial fan-made companion
+        </div>
+
+        <h1>
+            <span class="hero-title-blue">SW: DBG</span>
+            <br>
+            <span class="hero-title-red">Campaign Companion</span>
+        </h1>
+
+        <p class="hero-subtitle">
+            Track campaigns, factions and deck changes,
+            or quickly set up a game with random faction assignments.
+        </p>
+
+        <p class="hero-note">
+            Designed as a companion for players of
+            Star Wars: Deckbuilding Game.
+        </p>
+
+    </div>
+</section>
+
+
+<!-- Modes -->
+
+<section>
+    <div class="container">
+
+        <div class="section-heading">
+            <h2>Two ways to organize your game</h2>
+            <p>
+                Choose the mode that matches the game you're about to play.
+            </p>
+        </div>
+
+        <div class="modes">
+
+            <article class="mode-card single">
+                <div class="mode-label">Mode 01</div>
+
+                <h3>Single Game</h3>
+
+                <p>
+                    Set up a game for 2–4 players and let the app
+                    handle faction assignment.
+                </p>
+
+                <ul>
+                    <li>Choose 2–4 players.</li>
+                    <li>Select the factions to use.</li>
+                    <li>Randomly assign factions to players.</li>
+                    <li>Use player names instead of player numbers.</li>
+                </ul>
+            </article>
+
+
+            <article class="mode-card campaign">
+                <div class="mode-label">Mode 02</div>
+
+                <h3>Campaign Companion</h3>
+
+                <p>
+                    Keep the information from your four-game campaign
+                    in one place so you know how to prepare the next game.
+                </p>
+
+                <ul>
+                    <li>Set up a two-player campaign.</li>
+                    <li>Select factions and reinforcements.</li>
+                    <li>Record cards removed from decks.</li>
+                    <li>Record cards added to decks.</li>
+                    <li>Save multiple campaigns.</li>
+                    <li>Use custom player names.</li>
+                </ul>
+            </article>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- Features -->
+
+<section id="features">
+    <div class="container">
+
+        <div class="section-heading">
+            <h2>Features</h2>
+            <p>
+                Everything is designed to keep campaign information
+                available when you need it at the table.
+            </p>
+        </div>
+
+        <div class="features">
+
+            <div class="feature">
+                <span class="feature-marker"></span>
+                <span>Two game modes</span>
+            </div>
+
+            <div class="feature">
+                <span class="feature-marker"></span>
+                <span>2–4 player game setup</span>
+            </div>
+
+            <div class="feature">
+                <span class="feature-marker"></span>
+                <span>Random faction assignment</span>
+            </div>
+
+            <div class="feature">
+                <span class="feature-marker"></span>
+                <span>Two-player campaign tracking</span>
+            </div>
+
+            <div class="feature">
+                <span class="feature-marker"></span>
+                <span>Four-game campaign progression</span>
+            </div>
+
+            <div class="feature">
+                <span class="feature-marker"></span>
+                <span>Track cards added and removed</span>
+            </div>
+
+            <div class="feature">
+                <span class="feature-marker"></span>
+                <span>Save multiple campaigns</span>
+            </div>
+
+            <div class="feature">
+                <span class="feature-marker"></span>
+                <span>Custom player names</span>
+            </div>
+
+            <div class="feature">
+                <span class="feature-marker"></span>
+                <span>No account or sign-in required</span>
+            </div>
+
+            <div class="feature">
+                <span class="feature-marker"></span>
+                <span>No advertisements</span>
+            </div>
+
+            <div class="feature">
+                <span class="feature-marker"></span>
+                <span>No personal data collection</span>
+            </div>
+
+            <div class="feature">
+                <span class="feature-marker"></span>
+                <span>Campaign data stored locally on your device</span>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- Privacy -->
+
+<section>
+    <div class="container">
+
+        <div class="privacy-box">
+
+            <h2>Privacy</h2>
+
+            <p>
+                SW: DBG – Campaign Companion does not require an account
+                and does not collect or transmit personal data.
+                Campaign information is stored locally on your device.
+            </p>
+
+            <a class="button" href="policy.html">
+                Read the Privacy Policy
+            </a>
+
+        </div>
+
+    </div>
+</section>
+
+
+<!-- Disclaimer -->
+
+<section>
+    <div class="container">
+
+        <p class="disclaimer">
+            SW: DBG – Campaign Companion is an unofficial fan-made
+            companion application. It is not affiliated with, sponsored
+            by, or endorsed by the publisher or owners of
+            Star Wars: Deckbuilding Game.
+            Star Wars: Deckbuilding Game and related names and trademarks
+            are the property of their respective owners.
+        </p>
+
+    </div>
+</section>
+
+</main>
+
+<footer> <div class="container footer-inner">
+
+    <div>
+        © 2026 SW: DBG – Campaign Companion
+    </div>
+
+    <div class="footer-links">
+        <a href="policy.html">Privacy Policy</a>
+
+        <a
+            href="https://github.com/RapoMG/StarWarsDBG_Selector"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            Source Code
+        </a>
+    </div>
+
+</div>
+
+</footer>
+
+</body> </html>
