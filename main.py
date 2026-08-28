@@ -473,7 +473,8 @@ class InfoPopup(Popup):
         import webbrowser
         if ref == "homepage":
             webbrowser.open("https://github.com/RapoMG/StarWarsDBG_Selector")
-
+        if ref == "policy":
+            webbrowser.open("https://rapomg.github.io/StarWarsDBG_Selector/policy.html")
 
 class WindowManager(ScreenManager):
     pass

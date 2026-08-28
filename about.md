@@ -15,7 +15,7 @@ In the app’s settings, you’ll find the option to change player names and sta
 
 Developed by [b]Krzysztof Janiak[/b].
 
-Version: 1.0.0
+Version: 1.0.02
 Application license: GNU GPL v3
 
 [ref=homepage]             //[color=f8ff54]GitHub project[/color]\\[/ref]
@@ -26,6 +26,9 @@ Application license: GNU GPL v3
 - [font=fonts/HeroikanamikusRegular.otf]Heroika[/font] by [b]Namik Mardakhaev[/b]
 - [font=fonts/RussoOne-Regular.ttf]Russo[/font] by [b]Jovanny Lemonad[/b]
 - [font=fonts/StarJedi-DGRW.ttf]StarJedi[/font] by [b]Boba Fonts[/b]
+
+
+[ref=policy][color=f8ff54]Privacy Policy[/color][/ref]
 
 License: SIL OPEN FONT LICENSE Version 1.1
 
