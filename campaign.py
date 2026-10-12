@@ -383,8 +383,22 @@ class CampaignDetailsWindow(Screen):
 
             popup.open()
 
-        else:
+        elif action == "starting base":
             popup = AddCardTablePopup()
+
+            popup.faction1 = self.campaign.players[0].faction.name
+            popup.faction2 = self.campaign.players[1].faction.name
+
+            popup.ids.faction1_card.hint_text = "The winner’s final base"
+            popup.ids.faction2_card.hint_text = "The winner’s final base"
+
+            popup.bind(on_dismiss=partial(self.update_card_list, action))
+            popup.bind(on_dismiss=self.schedule_button_update)
+
+            popup.open()
+
+        else:
+            popup = Add5CardsTablePopup()
 
             popup.faction1 = self.campaign.players[0].faction.name
             popup.faction2 = self.campaign.players[1].faction.name
@@ -394,13 +408,22 @@ class CampaignDetailsWindow(Screen):
                 "added cards": "Name card to add",
                 "removed missions": "Name completed mission",
                 "removed bases": "Name base to remove",
-                "starting base": "The winner’s final base",
+                #"starting base": "The winner’s final base",
             }
 
             popup.action = hints[action]
 
-            popup.ids.faction1_card.hint_text = hints.get(action, "Card name")
-            popup.ids.faction2_card.hint_text = hints.get(action, "Card name")
+            popup.ids.faction1a_card.hint_text = hints.get(action, "Card name")
+            popup.ids.faction1b_card.hint_text = hints.get(action, "Card name")
+            popup.ids.faction1c_card.hint_text = hints.get(action, "Card name")
+            popup.ids.faction1d_card.hint_text = hints.get(action, "Card name")
+            popup.ids.faction1e_card.hint_text = hints.get(action, "Card name")
+
+            popup.ids.faction2a_card.hint_text = hints.get(action, "Card name")
+            popup.ids.faction2b_card.hint_text = hints.get(action, "Card name")
+            popup.ids.faction2c_card.hint_text = hints.get(action, "Card name")
+            popup.ids.faction2d_card.hint_text = hints.get(action, "Card name")
+            popup.ids.faction2e_card.hint_text = hints.get(action, "Card name")
 
             popup.bind(on_dismiss=partial(self.update_card_list, action))
             popup.bind(on_dismiss=self.schedule_button_update)
@@ -471,8 +494,17 @@ class CampaignDetailsWindow(Screen):
 
         # Add cards to dictionaries
         else:
-            self.add_card_copy(p1_cards, popup.ids.faction1_card.text)
-            self.add_card_copy(p2_cards, popup.ids.faction2_card.text)
+            self.add_card_copy(p1_cards, popup.ids.faction1a_card.text)
+            self.add_card_copy(p1_cards, popup.ids.faction1b_card.text)
+            self.add_card_copy(p1_cards, popup.ids.faction1c_card.text)
+            self.add_card_copy(p1_cards, popup.ids.faction1d_card.text)
+            self.add_card_copy(p1_cards, popup.ids.faction1e_card.text)
+
+            self.add_card_copy(p2_cards, popup.ids.faction2a_card.text)
+            self.add_card_copy(p2_cards, popup.ids.faction2b_card.text)
+            self.add_card_copy(p2_cards, popup.ids.faction2c_card.text)
+            self.add_card_copy(p2_cards, popup.ids.faction2d_card.text)
+            self.add_card_copy(p2_cards, popup.ids.faction2e_card.text)
 
         self.populate_card_rows(container, p1_cards, p2_cards)
 
@@ -732,6 +764,26 @@ class AddCardTablePopup(Popup):
     faction2_card = StringProperty("")
 
 
+class Add5CardsTablePopup(Popup):
+
+    action = StringProperty("")
+
+    faction1 = StringProperty("")
+    faction2 = StringProperty("")
+
+    faction1a_card = StringProperty("")
+    faction1b_card = StringProperty("")
+    faction1c_card = StringProperty("")
+    faction1d_card = StringProperty("")
+    faction1e_card = StringProperty("")
+
+    faction2a_card = StringProperty("")
+    faction2b_card = StringProperty("")
+    faction2c_card = StringProperty("")
+    faction2d_card = StringProperty("")
+    faction2e_card = StringProperty("")
+
+
 class StarterCardsPopup(Popup):
 
     faction1 = StringProperty("")
@@ -786,6 +838,7 @@ class DeckErrorsPopup(Popup):
                     height=40,
                 )
                 errors_grid.add_widget(empty_line)
+
 
 class DeleteCampaignPopup(Popup):
     def __init__(self, campaign, on_confirm, **kwargs):
