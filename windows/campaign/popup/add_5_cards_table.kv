@@ -1,0 +1,156 @@
+<Add5CardsTablePopup>:
+
+    title_size: 0  # no title line
+    separator_height:0 # no separator line
+
+    auto_dismiss: False # auto_dismiss set to True to allow user to dismiss popup
+    size_hint: (0.9, 0.9)
+
+    background: 'images/backgrounds/panel.png'
+
+
+    FloatLayout:
+
+        TabbedPanel:
+            do_default_tab: False
+            pos_hint: {"center_y":.56, "center_x":0.5}
+            size_hint: (0.99, 0.9)
+            tab_pos: 'top_mid'
+            background_image: 'images/backgrounds/fog.png'
+
+            PopPanel:
+                text: root.faction1  # That's the tab tittle
+
+                ScrollView:
+
+                    GridLayout:
+                        cols:1
+                        rows:6
+                        spacing: dp(40)
+                        padding: (dp(20),dp(10),dp(20),dp(20))
+
+                        Label:
+                            size_hint: (1, None)
+                            text: root.action # There will be a page title
+                            font_name: "Holo"
+                            color: (0.33, 1, 0.73, 0.812)
+                            font_size: min(Window.width, Window.height) * 0.075
+                            bold: True
+
+                        CardRename:
+                            id: faction1a_card
+                            hint_text: "card to add"
+                            text: ""
+                            size_hint_x: .75
+
+                        CardRename:
+                            id: faction1b_card
+                            hint_text: "card to add"
+                            text: ""
+                            size_hint_x: .85
+
+                        CardRename:
+                            id: faction1c_card
+                            hint_text: "card to add"
+                            text: ""
+                            size_hint_x: .85
+
+                        CardRename:
+                            id: faction1d_card
+                            hint_text: "card to add"
+                            text: ""
+                            size_hint_x: .9
+
+                        CardRename:
+                            id: faction1e_card
+                            hint_text: "card to add"
+                            text: ""
+                            size_hint_x: .95
+
+
+            PopPanel:
+                text: root.faction2  # That's the tab tittle
+
+                ScrollView:
+
+                    GridLayout:
+                        cols:1
+                        rows:6
+                        spacing: dp(40)
+                        padding: (dp(20),dp(10),dp(20),dp(20))
+
+                        Label:
+                            size_hint: (1, None)
+                            text: root.action # There will be a page title
+                            font_name: "Holo"
+                            color: (0.33, 1, 0.73, 0.812)
+                            font_size: min(Window.width, Window.height) * 0.075
+                            bold: True
+
+                        CardRename:
+                            id: faction2a_card
+                            hint_text: "card to add"
+                            text: ""
+                            size_hint_x: .75
+
+                        CardRename:
+                            id: faction2b_card
+                            hint_text: "card to add"
+                            text: ""
+                            size_hint_x: .85
+
+                        CardRename:
+                            id: faction2c_card
+                            hint_text: "card to add"
+                            text: ""
+                            size_hint_x: .85
+
+                        CardRename:
+                            id: faction2d_card
+                            hint_text: "card to add"
+                            text: ""
+                            size_hint_x: .9
+
+                        CardRename:
+                            id: faction2e_card
+                            hint_text: "card to add"
+                            text: ""
+                            size_hint_x: .95
+
+        Button:
+            text: 'Return'
+            color: (0.33, 1, 0.73, 0.812)
+            font_name: "Holo"
+            font_size: min(Window.width, Window.height) * 0.07
+
+            size_hint: (0.5, 0.10)
+            pos_hint :{'center_x':0.5, 'center_y':0.048}
+            background_normal: 'images/nav_buttons/tab_fog_med.png'
+            background_down: 'images/nav_buttons/tab_fog_dark.png'
+
+
+            canvas.after:
+                # Normal
+                Color:
+                    rgba: (0.33, 1, 0.73, 0.812) if self.state == 'normal' else (0,0,0,0)
+                Line:
+                    points:
+                        (self.x, self.top,
+                        self.x, self.y,
+                        self.right, self.y,
+                        self.right, self.top)
+                    width: 1
+
+                # Down
+                Color:
+                    rgba: (0.33, 1, 0.73, 0.812) if self.state == 'down' else (0,0,0,0)
+                Line:
+                    points:
+                        (self.x, self.top,
+                        self.x, self.y,
+                        self.right, self.y,
+                        self.right, self.top,
+                        )
+                    width: 4
+
+            on_release: root.dismiss()
