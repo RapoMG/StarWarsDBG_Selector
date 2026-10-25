@@ -79,99 +79,167 @@
                             root.update()
                             root.dismiss()
 
+###########################################################
             PopPanel:
                 text: "Cards"
 
-                ScrollView:
-                    do_scroll_x: False
+                GridLayout:
+                    rows: 2
+                    cols: 1
+                    spacing: dp(0)
 
-                    GridLayout:
-                        rows: 15
-                        cols: 1
-                        size_hint_y: None
-                        height: self.minimum_height
-                        spacing: dp(10)
+                    ##############
+                    Label:
+                        size_hint: (1,.1) # .1 for the Title height
 
-                        Label:
-                            size_hint: (1, None)
+                        text: "_Assign code names_"
+                        font_name: "Holo"
+                        color: (0.33, 1, 0.73, 0.812)
+                        font_size: min(Window.width, Window.height) * 0.075
+                        bold: True
+                    ############
 
-                            text: "_Assign code names_"
-                            font_name: "Holo"
-                            color: (0.33, 1, 0.73, 0.812)
-                            font_size: min(Window.width, Window.height) * 0.075
-                            bold: True
+                    TabbedPanel:
+                        do_default_tab: False  # prevent default tab
+                        pos_hint: {"center_y":.54, "center_x":0.5}
+                        size_hint: (0.99, 0.9)
+                        tab_pos: 'top_mid'
+                        spacing: (dp(30)) # only first widget in the tabbed panel is affected by spacing, so it is used to create space between the tabs and the content of the tabbed panel
+                        padding: (dp(0),dp(00),dp(0),dp(20))
+                        background_image: '' # no background for the tabbed panel
+                        background_color: (0, 0, 0, 0)
 
-                        SectionLabel:
+                        PopPanel:
                             text: f"Rebelion"
+                            id: rebel_tab
 
-                        CardGrid:
-                            id: reb_layout
+                            ScrollView:
+                                do_scroll_x: False
 
-                        SectionLabel:
-                            text: "Reinforcements"
-                            font_size: min(Window.width, Window.height) * 0.055
+                                GridLayout:
+                                    rows: 3
+                                    cols: 1
+                                    size_hint_y: None
+                                    height: self.minimum_height
+                                    spacing: dp(20) # spacing between the sections
 
-                        CardGrid:
-                            id: reb_re_layout
-                            padding: [self.width * 0.30, 0, self.width * 0.15, 0]
+                                    CardGrid:
+                                        id: reb_layout
 
-                        SectionLabel:
+                                    SectionLabel:
+                                        text: "Reinforcements"
+                                        font_size: min(Window.width, Window.height) * 0.055
+
+                                    CardGrid:
+                                        id: reb_re_layout
+                                        padding: [self.width * 0.30, 0, self.width * 0.15, 0]
+
+                        PopPanel:
                             text: "Empire"
+                            id: empire_tab
 
-                        CardGrid:
-                            id: imp_layout
+                            ScrollView:
+                                do_scroll_x: False
 
-                        SectionLabel:
-                            text: "Reinforcements"
-                            font_size: min(Window.width, Window.height) * 0.055
+                                GridLayout:
+                                    rows: 3
+                                    cols: 1
+                                    size_hint_y: None
+                                    height: self.minimum_height
+                                    spacing: dp(20) # spacing between the sections
 
-                        CardGrid:
-                            id: imp_re_layout
-                            padding: [self.width * 0.30, 0, self.width * 0.15, 0]
+                                    CardGrid:
+                                        id: imp_layout
 
-                        SectionLabel:
+                                    SectionLabel:
+                                        text: "Reinforcements"
+                                        font_size: min(Window.width, Window.height) * 0.055
+
+                                    CardGrid:
+                                        id: imp_re_layout
+                                        padding: [self.width * 0.30, 0, self.width * 0.15, 0]
+
+                        PopPanel:
                             text: "Republic"
 
-                        CardGrid:
-                            id: pub_layout
+                            CardGrid:
+                                id: pub_layout
 
-                        SectionLabel:
+                        PopPanel:
                             text: "Separatists"
 
-                        CardGrid:
-                            id: sep_layout
+                            CardGrid:
+                                id: sep_layout
 
-                        SectionLabel:
+                        PopPanel:
                             text: "Mandalorian"
 
-                        CardGrid:
-                            id: mando_layout
+                            CardGrid:
+                                id: mando_layout
+
+
 
             PopPanel:
-                text: "About"
+                text: "App"
 
-                ScrollView:
-                    do_scroll_x: False
+                TabbedPanel:
+                    do_default_tab: False  # prevent default tab
+                    pos_hint: {"center_y":.54, "center_x":0.5}
+                    size_hint: (0.99, 0.9)
+                    tab_pos: 'top_mid'
+                    padding: (dp(0),dp(0),dp(0),dp(20))
+                    background_image: '' # no background for the tabbed panel
+                    background_color: (0, 0, 0, 0)
 
-                    Label:
-                        markup: True
-                        font_name: "Holo"
-                        font_size: min(Window.width, Window.height) * 0.045
-                        size_hint: (0.99, 0.9)
-                        color: (0.33, 1, 0.73, 0.812)
-                        text: root.about
+                    PopPanel:
+                        text: "Introduction"
 
-                        # text alignment
-                        halign: "left"
-                        valign: "top"
-                        size_hint_y: None
-                        height: self.texture_size[1]
+                        ScrollView:
+                            do_scroll_x: False
 
-                        text_size: self.width - dp(20), None
-                        padding: dp(10), dp(10)
-                        # Link to github
-                        on_ref_press: root.link_to_github(args[1])
+                            Label:
+                                markup: True
+                                font_name: "Holo"
+                                font_size: min(Window.width, Window.height) * 0.045
+                                size_hint: (0.99, 0.9)
+                                color: (0.33, 1, 0.73, 0.812)
+                                text: root.intro
 
+                                # text alignment
+                                halign: "left"
+                                valign: "top"
+                                size_hint_y: None
+                                height: self.texture_size[1]
+
+                                text_size: self.width - dp(20), None
+                                padding: dp(10), dp(10)
+
+                    PopPanel:
+                        text: "About"
+
+                        ScrollView:
+                            do_scroll_x: False
+
+                            Label:
+                                markup: True
+                                font_name: "Holo"
+                                font_size: min(Window.width, Window.height) * 0.045
+                                size_hint: (0.99, 0.9)
+                                color: (0.33, 1, 0.73, 0.812)
+                                text: root.about
+
+                                # text alignment
+                                halign: "left"
+                                valign: "top"
+                                size_hint_y: None
+                                height: self.texture_size[1]
+
+                                text_size: self.width - dp(20), None
+                                padding: dp(10), dp(10)
+                                # Link to github
+                                on_ref_press: root.link_to_github(args[1])
+
+# Close button for popup
         Button:
             text: 'Return'
             color: (0.33, 1, 0.73, 0.812)

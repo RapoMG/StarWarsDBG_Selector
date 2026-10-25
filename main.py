@@ -357,6 +357,7 @@ class InfoPopup(Popup):
 
     # Property for information about the app
     about = StringProperty("")
+    intro = StringProperty("")
 
     def on_open(self):
 
@@ -587,12 +588,24 @@ class SelectorApp(App):
         # Prepare values
         players = app.data.get_players()
         about_path = resource_find("about.md")
+        intro_path = resource_find("intro.md")
+
         if about_path is None:
             about_path = BASE_DIR / "about.md"
+
+        if about_path is None:
+            about_path = BASE_DIR / "about.md"
+
+        # rewrite to loop
         try:
             about = Path(about_path).read_text(encoding="utf-8")
         except FileNotFoundError:
             about = "Missing file"
+
+        try:
+            intro = Path(intro_path).read_text(encoding="utf-8")
+        except FileNotFoundError:
+            intro = "Missing file"
 
         popup = InfoPopup(
             # Pass players names
@@ -605,6 +618,7 @@ class SelectorApp(App):
 
             # Pass about text
             about=about,
+            intro=intro,
         )
         # Open popup with prepared values
         popup.open()
